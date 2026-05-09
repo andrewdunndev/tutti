@@ -1,0 +1,89 @@
+<svg viewBox="0 0 1200 430" width="1200" height="430" font-family="IBM Plex Sans, Helvetica, Arial, sans-serif" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="tutti, the audio renderer probe. Big project title and tagline on the left. Beneath, the metaphorical mark: a conductor cueing a fanned arc of renderers, with the cue going out in moss and the responses returning in dashed grey. On the right, a four-tile data sheet covering wire activity (in, out) and discipline (posture, lifetime). Bottom line: territory tags and license.">
+  <rect x="0" y="0" width="1200" height="430" fill="#f4f4f4"/>
+  <g font-family="IBM Plex Sans, Helvetica, Arial, sans-serif">
+
+  <!-- top row: project line + year, like a data-sheet header -->
+  <text x="60" y="34" font-size="10" font-weight="600" font-family="IBM Plex Mono, Menlo, monospace" fill="#707070" letter-spacing="1.4">PROJECT · AUDIO RENDERER PROBE</text>
+  <text x="1140" y="34" text-anchor="end" font-size="10" font-weight="600" font-family="IBM Plex Mono, Menlo, monospace" fill="#707070" letter-spacing="1.4">2026</text>
+  <line x1="60" y1="48" x2="1140" y2="48" stroke="#e0e0e0" stroke-width="1"/>
+
+  <!-- left: project name + tagline -->
+  <text x="60" y="138" font-size="72" font-weight="700" fill="#4a6741" letter-spacing="-2">tutti</text>
+  <text x="60" y="172" font-size="14" fill="#404040">a probe that calls out to every audio renderer on the network,</text>
+  <text x="60" y="192" font-size="14" fill="#404040">listens for what each one says, and writes it down.</text>
+
+  <!-- left: metaphor mark. conductor + fanned arc of renderers. lifted from avatar.svg, scaled and elaborated. -->
+  <text x="60" y="222" font-size="12" font-style="italic" fill="#404040">tutti calls; everyone responds.</text>
+  <g>
+    <!-- the orchestra arc: 9 renderers in a wider fan -->
+    <circle cx="80"  cy="296" r="12" fill="#f4f4f4" stroke="#0a0a0a" stroke-width="1.5"/>
+    <circle cx="130" cy="272" r="12" fill="#f4f4f4" stroke="#0a0a0a" stroke-width="1.5"/>
+    <circle cx="180" cy="256" r="12" fill="#f4f4f4" stroke="#0a0a0a" stroke-width="1.5"/>
+    <circle cx="230" cy="246" r="12" fill="#f4f4f4" stroke="#0a0a0a" stroke-width="1.5"/>
+    <circle cx="280" cy="242" r="12" fill="#f4f4f4" stroke="#0a0a0a" stroke-width="1.5"/>
+    <circle cx="330" cy="246" r="12" fill="#f4f4f4" stroke="#0a0a0a" stroke-width="1.5"/>
+    <circle cx="380" cy="256" r="12" fill="#f4f4f4" stroke="#0a0a0a" stroke-width="1.5"/>
+    <circle cx="430" cy="272" r="12" fill="#f4f4f4" stroke="#0a0a0a" stroke-width="1.5"/>
+    <circle cx="480" cy="296" r="12" fill="#f4f4f4" stroke="#0a0a0a" stroke-width="1.5"/>
+
+    <!-- conductor at the front-centre -->
+    <circle cx="280" cy="356" r="18" fill="#f4f4f4" stroke="#4a6741" stroke-width="2.5"/>
+    <circle cx="280" cy="356" r="5"  fill="#4a6741"/>
+
+    <!-- the cue: solid moss lines from the conductor edge to each renderer edge, offset +3px perpendicular so the responses sit in the parallel lane. computed against conductor (280, 356) r=18 and renderer r=12. -->
+    <line x1="263.6" y1="348.0" x2="92.4"  y2="296.6" stroke="#4a6741" stroke-width="1.25"/>
+    <line x1="265.8" y1="344.6" x2="141.9" y2="275.2" stroke="#4a6741" stroke-width="1.25"/>
+    <line x1="269.4" y1="341.2" x2="190.6" y2="262.4" stroke="#4a6741" stroke-width="1.25"/>
+    <line x1="275.3" y1="338.4" x2="237.7" y2="255.7" stroke="#4a6741" stroke-width="1.25"/>
+    <line x1="283"   y1="338"   x2="283"   y2="254"   stroke="#4a6741" stroke-width="1.25"/>
+    <line x1="290.2" y1="340.9" x2="327.8" y2="258.2" stroke="#4a6741" stroke-width="1.25"/>
+    <line x1="294.9" y1="345.4" x2="373.6" y2="266.6" stroke="#4a6741" stroke-width="1.25"/>
+    <line x1="297.2" y1="349.8" x2="421.0" y2="280.5" stroke="#4a6741" stroke-width="1.25"/>
+    <line x1="298.1" y1="353.7" x2="469.4" y2="302.3" stroke="#4a6741" stroke-width="1.25"/>
+
+    <!-- the responses: dashed mute lines, same edge-to-edge geometry, offset -3px perpendicular. each pair reads as two parallel lanes. -->
+    <line x1="90.6"  y1="302.3" x2="261.9" y2="353.7" stroke="#707070" stroke-width="0.8" stroke-dasharray="2,2"/>
+    <line x1="139.0" y1="280.5" x2="262.8" y2="349.8" stroke="#707070" stroke-width="0.8" stroke-dasharray="2,2"/>
+    <line x1="186.4" y1="266.6" x2="265.2" y2="345.4" stroke="#707070" stroke-width="0.8" stroke-dasharray="2,2"/>
+    <line x1="232.2" y1="258.2" x2="269.8" y2="340.9" stroke="#707070" stroke-width="0.8" stroke-dasharray="2,2"/>
+    <line x1="277"   y1="254"   x2="277"   y2="338"   stroke="#707070" stroke-width="0.8" stroke-dasharray="2,2"/>
+    <line x1="322.3" y1="255.7" x2="284.7" y2="338.4" stroke="#707070" stroke-width="0.8" stroke-dasharray="2,2"/>
+    <line x1="369.4" y1="262.4" x2="290.6" y2="341.2" stroke="#707070" stroke-width="0.8" stroke-dasharray="2,2"/>
+    <line x1="418.1" y1="275.2" x2="294.2" y2="344.6" stroke="#707070" stroke-width="0.8" stroke-dasharray="2,2"/>
+    <line x1="467.6" y1="296.6" x2="296.4" y2="348.0" stroke="#707070" stroke-width="0.8" stroke-dasharray="2,2"/>
+  </g>
+
+  <!-- right: 2x2 tile grid. column headers above each pair. -->
+  <text x="560" y="72" font-size="10" font-weight="700" font-family="IBM Plex Mono, Menlo, monospace" fill="#707070" letter-spacing="1.4">WIRE</text>
+  <text x="850" y="72" font-size="10" font-weight="700" font-family="IBM Plex Mono, Menlo, monospace" fill="#707070" letter-spacing="1.4">DISCIPLINE</text>
+
+  <rect x="560" y="84" width="270" height="130" rx="3" fill="#ffffff" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="578" y="106" font-size="10" font-weight="700" font-family="IBM Plex Mono, Menlo, monospace" fill="#707070" letter-spacing="1.4">IN</text>
+  <text x="578" y="152" font-size="34" font-weight="700" fill="#4a6741" letter-spacing="-0.5">the network</text>
+  <text x="578" y="178" font-size="11" fill="#404040">every renderer announcing itself</text>
+  <text x="578" y="200" font-size="9" font-family="IBM Plex Mono, Menlo, monospace" fill="#707070" letter-spacing="0.6">SSDP · MDNS · ALL DIALECTS</text>
+
+  <rect x="850" y="84" width="270" height="130" rx="3" fill="#ffffff" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="868" y="106" font-size="10" font-weight="700" font-family="IBM Plex Mono, Menlo, monospace" fill="#707070" letter-spacing="1.4">POSTURE</text>
+  <text x="868" y="152" font-size="34" font-weight="700" fill="#4a6741" letter-spacing="-0.5">passive</text>
+  <text x="868" y="178" font-size="11" fill="#404040">no upload, no telemetry, no upstream</text>
+  <text x="868" y="200" font-size="9" font-family="IBM Plex Mono, Menlo, monospace" fill="#707070" letter-spacing="0.6">OPT-IN INTERACTION ONLY</text>
+
+  <rect x="560" y="224" width="270" height="130" rx="3" fill="#ffffff" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="578" y="246" font-size="10" font-weight="700" font-family="IBM Plex Mono, Menlo, monospace" fill="#707070" letter-spacing="1.4">OUT</text>
+  <text x="578" y="292" font-size="34" font-weight="700" fill="#4a6741" letter-spacing="-0.5">evidence</text>
+  <text x="578" y="318" font-size="11" fill="#404040">structured, raw, paste-ready</text>
+  <text x="578" y="340" font-size="9" font-family="IBM Plex Mono, Menlo, monospace" fill="#707070" letter-spacing="0.6">MANIFEST · ARTIFACTS · TRANSCRIPTS</text>
+
+  <rect x="850" y="224" width="270" height="130" rx="3" fill="#ffffff" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="868" y="246" font-size="10" font-weight="700" font-family="IBM Plex Mono, Menlo, monospace" fill="#707070" letter-spacing="1.4">LIFETIME</text>
+  <text x="868" y="292" font-size="34" font-weight="700" fill="#4a6741" letter-spacing="-0.5">stable</text>
+  <text x="868" y="318" font-size="11" fill="#404040">schema-versioned across time</text>
+  <text x="868" y="340" font-size="9" font-family="IBM Plex Mono, Menlo, monospace" fill="#707070" letter-spacing="0.6">VALIDATE BY CONSTRUCTION</text>
+
+  <!-- bottom row: territory pills + license + repo -->
+  <line x1="60" y1="386" x2="1140" y2="386" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="60"   y="412" font-size="10" font-weight="600" font-family="IBM Plex Mono, Menlo, monospace" fill="#707070" letter-spacing="1.4">AUDIO · RENDERER · UPNP · MDNS · EVIDENCE · DIAGNOSTIC</text>
+  <text x="1140" y="412" text-anchor="end" font-size="10" font-weight="600" font-family="IBM Plex Mono, Menlo, monospace" fill="#707070" letter-spacing="1.4">MIT · GITLAB.COM/DUNN.DEV/TUTTI</text>
+  </g>
+</svg>
