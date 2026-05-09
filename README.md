@@ -147,10 +147,16 @@ analysis. Adding `--drive` does the AVTransport probe against
 discovered UPnP renderers, fetching test tones from
 `tutti.dunn.dev/audio/`.
 
-`--drive` first calls `GetTransportInfo` on each candidate device. If
-the device is currently `PLAYING`, tutti refuses and prints "device is
-in PLAYING state; pass `--drive --force` to interrupt." Default
-behavior protects whoever might be listening.
+`--drive` calls `GetTransportInfo` once before any tones run. If the
+device is `PLAYING` something at that moment, tutti refuses and
+prints "device is in PLAYING state; pass `--drive --force` to
+interrupt." Default behavior protects whoever might be listening.
+
+Between tones, tutti emits `Stop` and waits briefly so the device is
+in `STOPPED` before the next `SetAVTransportURI`. The whole tone
+matrix runs in one pass without further intervention. Tutti also
+emits a final `Stop` on the way out so the device isn't left parked
+on a tutti tone after the run completes.
 
 `tutti capture` writes manifests that pass `tutti validate` by
 construction. You only run `tutti validate` directly to confirm a

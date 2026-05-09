@@ -11,13 +11,15 @@ first capture in the tutti corpus.
 
 ## Notable choices for this run
 
-- `--drive --force`: the per-tone precheck bails on the second tone
-  because the device is still PLAYING the first (tutti does not yet
-  issue Stop between tones). `--force` was safe here because the
-  Eversolo's amplifier was off, so even though every run reached
-  PLAYING the speakers were silent. Without `--force`, only the first
-  tone's drive run completes; all subsequent tones report
-  `result=rejected` with a `device was PLAYING` reason.
+- `--drive --force` was used because at the time of this capture, drive
+  did not yet emit Stop between tones, so the per-tone precheck
+  refused the second run. The fix landed immediately after this
+  capture (drive now emits Stop between tones); future captures need
+  `--force` only if the device was already PLAYING something when the
+  run started.
+- The amplifier was off for the duration of this capture, so every
+  PLAYING transition reached the device's display + decoder pipeline
+  but not the speakers.
 
 ## Evidence highlights
 

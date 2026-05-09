@@ -61,6 +61,7 @@ const (
 	defaultPollInterval = 3 * time.Second
 	defaultPollDuration = 12 * time.Second
 	soapTimeout         = 10 * time.Second
+	stopSettle          = 500 * time.Millisecond
 )
 
 // Options configures a single Run. AVTransportControlURL and Tones are
@@ -117,28 +118,77 @@ func Run(ctx context.Context, opts Options) (schema.DriveTest, error) {
 	test := schema.DriveTest{Performed: true}
 	client := &http.Client{Timeout: soapTimeout}
 
+	// One-shot precheck at the start. If the device is already PLAYING
+	// (something the user is listening to) and --force was not set, we
+	// refuse the entire run with a single rejected entry. After this
+	// point every driveOne assumes the device is OK to interrupt; we
+	// emit Stop between tones so the per-tone state is always STOPPED
+	// at the next SetAVTransportURI.
+	if rejected, run, err := initialPrecheck(ctx, client, opts); rejected {
+		test.Runs = append(test.Runs, run)
+		return test, nil
+	} else if err != nil {
+		// Network-level failure on the first SOAP call: surface as a
+		// "did not run" rather than a per-tone error, since we never
+		// got far enough to attempt a tone.
+		return schema.DriveTest{Performed: false, SkippedReason: fmt.Sprintf("precheck GetTransportInfo: %v", err)}, nil
+	}
+
+	// Always Stop on the way out, so we never leave the device parked
+	// playing one of our tones if the loop is cut short.
+	defer emitStop(context.Background(), client, opts.AVTransportControlURL)
+
 	for i, tone := range opts.Tones {
 		idx := i + 1
-		run, rejected, err := driveOne(ctx, client, opts, tone, idx, pollInterval, pollDuration)
-		if err != nil {
-			// If the very first run never even produced a precheck we
-			// treat that as Performed=false so the orchestrator can
-			// flag a setup-level problem rather than a per-tone error.
-			if i == 0 && len(test.Runs) == 0 && run.Result == "" {
-				return schema.DriveTest{Performed: false, SkippedReason: err.Error()}, nil
-			}
-			// Otherwise, the run is recorded as errored with the SOAP
-			// failure folded into result_reason and we keep going.
-		}
+		run := driveOne(ctx, client, opts, tone, idx, pollInterval, pollDuration)
 		test.Runs = append(test.Runs, run)
-		if rejected {
-			// The PLAYING precheck path is the documented "we will not
-			// touch a device that is in use" case. Stop after recording
-			// the single rejected run.
-			return test, nil
-		}
+
+		// Hand the device back to STOPPED before the next tone so the
+		// next SetAVTransportURI starts from a clean state. Most
+		// renderers tolerate "URI swap mid-playback" but a few choke;
+		// emitting Stop is the conservative choice and matches what a
+		// real control point does between tracks.
+		emitStop(ctx, client, opts.AVTransportControlURL)
 	}
 	return test, nil
+}
+
+// initialPrecheck calls GetTransportInfo once before any tones run. It
+// returns rejected=true with a single populated DriveRun when the device
+// is PLAYING and Force was not set.
+func initialPrecheck(ctx context.Context, client *http.Client, opts Options) (bool, schema.DriveRun, error) {
+	status, body, err := soapCall(ctx, client, opts.AVTransportControlURL, "GetTransportInfo", argsInstanceOnly())
+	if err != nil {
+		return false, schema.DriveRun{}, err
+	}
+	if status < 200 || status >= 300 {
+		return false, schema.DriveRun{}, fmt.Errorf("HTTP %d", status)
+	}
+	fields, _ := parseSimpleResponse(body)
+	state := strings.ToUpper(strings.TrimSpace(fields["CurrentTransportState"]))
+	if state != "PLAYING" || opts.Force {
+		return false, schema.DriveRun{}, nil
+	}
+	rejected := schema.DriveRun{
+		Scenario:       "precheck",
+		MIME:           "",
+		Result:         schema.DriveResultRejected,
+		ResultReason:   "device was PLAYING; rerun with --force",
+		Transitions:    []string{"PLAYING"},
+		TranscriptFile: "",
+	}
+	return true, rejected, nil
+}
+
+// emitStop sends a best-effort Stop. Errors are intentionally swallowed:
+// a Stop failure is a per-device quirk we record in the next tone's
+// transcript (because that tone's SetAVTransportURI will see whatever
+// state the device is actually in), not a fatal condition.
+func emitStop(ctx context.Context, client *http.Client, controlURL string) {
+	_, _, _ = soapCall(ctx, client, controlURL, "Stop", "<InstanceID>0</InstanceID>")
+	// Brief settle time so the next GetTransportInfo will reflect STOPPED.
+	// This matches what real control points do between tracks.
+	time.Sleep(stopSettle)
 }
 
 // skipped is the canonical "did not run anything" return. It is a
@@ -147,9 +197,10 @@ func skipped(reason string) (schema.DriveTest, error) {
 	return schema.DriveTest{Performed: false, SkippedReason: reason}, nil
 }
 
-// driveOne runs the full sequence for a single tone. The bool return
-// indicates the precheck rejection path so the caller can stop the
-// outer loop without further error.
+// driveOne runs the full sequence for a single tone. The caller is
+// responsible for ensuring the device is in a state ready to accept a
+// new SetAVTransportURI (the orchestrator emits Stop between tones to
+// guarantee this).
 func driveOne(
 	ctx context.Context,
 	client *http.Client,
@@ -157,7 +208,7 @@ func driveOne(
 	tone audio.Tone,
 	idx int,
 	pollInterval, pollDuration time.Duration,
-) (schema.DriveRun, bool, error) {
+) schema.DriveRun {
 	scenario := tone.Scenario()
 	fileURL := opts.AudioServer.URLFor(tone)
 
@@ -182,32 +233,8 @@ func driveOne(
 		TranscriptFile: transcriptPath,
 	}
 
-	// Precheck: GetTransportInfo. We treat a PLAYING device as in-use
-	// and refuse to interrupt unless --force was set.
 	tStart := time.Now()
 	step := 0
-	step++
-	preStatus, preBody, err := soapCall(ctx, client, opts.AVTransportControlURL, "GetTransportInfo", argsInstanceOnly())
-	tr.step(step, "GetTransportInfo", preStatus, preBody, err)
-	if err != nil {
-		run.Result = schema.DriveResultErrored
-		run.ResultReason = fmt.Sprintf("precheck GetTransportInfo: %v", err)
-		run.ElapsedSeconds = time.Since(tStart).Seconds()
-		writeTranscript(transcriptPath, tr.finish(run))
-		return run, false, err
-	}
-	preFields, _ := parseSimpleResponse(preBody)
-	preState := strings.ToUpper(strings.TrimSpace(preFields["CurrentTransportState"]))
-	if preState != "" {
-		run.Transitions = appendUnique(run.Transitions, preState)
-	}
-	if preState == "PLAYING" && !opts.Force {
-		run.Result = schema.DriveResultRejected
-		run.ResultReason = "device was PLAYING; rerun with --force"
-		run.ElapsedSeconds = time.Since(tStart).Seconds()
-		writeTranscript(transcriptPath, tr.finish(run))
-		return run, true, nil
-	}
 
 	// Build DIDL-Lite to ship with SetAVTransportURI. The cover-art
 	// URL is left empty: tutti has no internal cover-art surface yet,
@@ -245,7 +272,7 @@ func driveOne(
 		}
 		run.ElapsedSeconds = time.Since(tStart).Seconds()
 		writeTranscript(transcriptPath, tr.finish(run))
-		return run, false, nil
+		return run
 	}
 
 	// Play.
@@ -261,7 +288,7 @@ func driveOne(
 		}
 		run.ElapsedSeconds = time.Since(tStart).Seconds()
 		writeTranscript(transcriptPath, tr.finish(run))
-		return run, false, nil
+		return run
 	}
 
 	// Poll loop. We sample both GetTransportInfo and GetPositionInfo
@@ -326,7 +353,7 @@ func driveOne(
 
 	tr.lastEchoedRaw = lastEchoedRaw
 	writeTranscript(transcriptPath, tr.finish(run))
-	return run, false, nil
+	return run
 }
 
 // argsInstanceOnly is the SOAP argument body for actions whose only
