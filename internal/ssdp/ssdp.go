@@ -210,14 +210,17 @@ func dialBound(ip4 net.IP) (*net.UDPConn, error) {
 		Control: func(_, _ string, c syscall.RawConn) error {
 			var sockErr error
 			if err := c.Control(func(fd uintptr) {
-				if e := syscall.SetsockoptInt(int(fd), syscall.SOL_SOCKET, syscall.SO_REUSEADDR, 1); e != nil {
+				// setReuseAddr / setReusePort are platform-split
+				// (BSD-family vs everything else); see the
+				// reuseport_*.go files. Both are no-ops on Windows,
+				// where syscall.SetsockoptInt's signature differs
+				// (Handle, not int) and SO_REUSEPORT doesn't exist.
+				if e := setReuseAddr(int(fd)); e != nil {
 					sockErr = e
 					return
 				}
-				// SO_REUSEPORT: not portable on every BSD/Linux combo;
-				// best-effort, ignore failure.
 				if e := setReusePort(int(fd)); e != nil {
-					// non-fatal
+					// best-effort; not portable on every BSD/Linux combo
 					_ = e
 				}
 			}); err != nil {

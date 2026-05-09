@@ -18,3 +18,17 @@ import "golang.org/x/sys/unix"
 func setReusePort(fd int) error {
 	return unix.SetsockoptInt(fd, unix.SOL_SOCKET, unix.SO_REUSEPORT, 1)
 }
+
+// setReuseAddr enables SO_REUSEADDR. On the BSD family this lets
+// multiple sockets bind to the same UDP port; tutti uses it to
+// fan-out the SSDP listener across every up + multicast IPv4 NIC.
+//
+// Wrapping the stdlib's syscall.SetsockoptInt would compile on every
+// platform that defines syscall.SOL_SOCKET as int, but on Windows
+// SetsockoptInt's first argument is syscall.Handle rather than int,
+// so we route through x/sys/unix here and a no-op on Windows
+// (Windows's default permissive port-bind semantics cover the
+// single-iface case; multi-iface SSDP on Windows is a known reduction).
+func setReuseAddr(fd int) error {
+	return unix.SetsockoptInt(fd, unix.SOL_SOCKET, unix.SO_REUSEADDR, 1)
+}
