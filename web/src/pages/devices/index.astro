@@ -1,0 +1,75 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import { groupCaptures, decisionSummary, driveSummary, formatDate } from '../../lib/devices';
+
+const captures = await getCollection('captures');
+const deviceMetas = await getCollection('devices');
+const corpus = groupCaptures(captures, deviceMetas);
+const devices = Array.from(corpus.values()).sort((a, b) =>
+  (a.vendor ?? a.slug).localeCompare(b.vendor ?? b.slug),
+);
+---
+<Layout title="Home" description="A corpus of audio renderer captures: descriptors, library decisions, drive transcripts. Browse the state of every device tutti has seen on a real LAN.">
+  <header>
+    <p class="page-eyebrow">Corpus</p>
+    <h1 class="page-title">Devices</h1>
+    <p class="page-lede">
+      What every audio renderer in this corpus actually does on the wire,
+      what each Go control-point library decides about it, and what tutti's
+      drive test observed end to end.
+    </p>
+  </header>
+
+  <section>
+    <table class="data devices-table">
+      <thead>
+        <tr>
+          <th>Vendor</th>
+          <th>Model</th>
+          <th>Discovery</th>
+          <th>Drive</th>
+          <th>Last captured</th>
+          <th>Captures</th>
+        </tr>
+      </thead>
+      <tbody>
+        {devices.map(d => {
+          const dec = decisionSummary(d.headlineDevice);
+          const drv = driveSummary(d.headlineDevice);
+          return (
+            <tr>
+              <td>{d.vendor ?? '—'}</td>
+              <td><a href={`/devices/${d.slug}/`}>{d.model ?? d.slug}</a></td>
+              <td><span class:list={['tag', dec.tone === 'mute' ? '' : dec.tone]}>{dec.label}</span></td>
+              <td><span class:list={['tag', drv.tone === 'mute' ? '' : drv.tone]}>{drv.label}</span></td>
+              <td class="mono">{formatDate(d.latest.data.captured_at)}</td>
+              <td class="mono">{d.history.length}</td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+
+    {devices.length === 0 && (
+      <p class="empty-note">
+        No captures yet. See <a href="/contribute/">Contribute</a> to add the
+        first device.
+      </p>
+    )}
+  </section>
+</Layout>
+
+<style>
+  .devices-table th:nth-child(5),
+  .devices-table th:nth-child(6),
+  .devices-table td:nth-child(5),
+  .devices-table td:nth-child(6) {
+    white-space: nowrap;
+  }
+  .empty-note {
+    margin-top: var(--space-5);
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+  }
+</style>

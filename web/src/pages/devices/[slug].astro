@@ -5,7 +5,8 @@ import { groupCaptures, decisionSummary, driveSummary, formatDate } from '../../
 
 export async function getStaticPaths() {
   const captures = await getCollection('captures');
-  const corpus = groupCaptures(captures);
+  const deviceMetas = await getCollection('devices');
+  const corpus = groupCaptures(captures, deviceMetas);
   return Array.from(corpus.values()).map(d => ({
     params: { slug: d.slug },
     props: { device: d },
@@ -62,17 +63,17 @@ function contributorUrl(c: string): string {
 ---
 <Layout title={`${device.vendor ?? ''} ${device.model ?? device.slug}`.trim()} description={`State summary for ${device.model ?? device.slug}: library decisions, format support, on-the-wire evidence, drive transcripts.`}>
   <header class="device-hero">
-    <p class="page-eyebrow">{device.vendor ?? '—'}</p>
+    <p class="page-eyebrow">{device.vendor ?? '—'}{device.meta?.discontinued && <span class="discontinued"> · discontinued</span>}</p>
     <h1 class="page-title">{device.model ?? device.slug}</h1>
-    <p class="page-lede">
+    {device.meta?.tagline && (
+      <p class="device-tagline">{device.meta.tagline}</p>
+    )}
+    <p class="device-meta">
       {head.descriptor?.parsed.x_dlna_doc && (
         <span class="dlna">{head.descriptor.parsed.x_dlna_doc}</span>
       )}
-      {head.descriptor?.parsed.model_description && (
-        <span> · {head.descriptor.parsed.model_description}</span>
-      )}
       {head.udn && (
-        <span> · <code>{head.udn}</code></span>
+        <>{head.descriptor?.parsed.x_dlna_doc && ' · '}<code>{head.udn}</code></>
       )}
     </p>
 
@@ -81,6 +82,22 @@ function contributorUrl(c: string): string {
       <span class:list={['tag', drv.tone === 'mute' ? '' : drv.tone]}>drive: {drv.label}</span>
       {head.tags?.map(t => <span class="tag">{t}</span>)}
     </div>
+
+    {device.meta?.links && Object.keys(device.meta.links).length > 0 && (
+      <nav class="hero-links" aria-label="Manufacturer links">
+        {device.meta.links.manufacturer && <a href={device.meta.links.manufacturer} target="_blank" rel="noopener">manufacturer →</a>}
+        {device.meta.links.support      && <a href={device.meta.links.support}      target="_blank" rel="noopener">support →</a>}
+        {device.meta.links.firmware     && <a href={device.meta.links.firmware}     target="_blank" rel="noopener">firmware →</a>}
+        {device.meta.links.manual       && <a href={device.meta.links.manual}       target="_blank" rel="noopener">manual →</a>}
+        {device.meta.links.purchase     && <a href={device.meta.links.purchase}     target="_blank" rel="noopener">purchase →</a>}
+      </nav>
+    )}
+
+    {!device.meta && (
+      <p class="meta-missing">
+        <em>No <code>device.json</code> authored for this slug yet — identity above is derived from the device's own descriptor. Add one at <code>evidence/{device.slug}/device.json</code> to surface canonical product name and manufacturer links.</em>
+      </p>
+    )}
   </header>
 
   <section class="tile-grid">
@@ -214,6 +231,7 @@ function contributorUrl(c: string): string {
       <details>
         <summary>Device descriptor — {desc.parsed.services.length} services advertised</summary>
         <div class="details-body">
+          <p class="device-reported-note">Fields below are what the <em>device itself</em> announced. friendlyName in particular reflects whatever the operator typed into the device's settings — it can include per-installation tags. Canonical product identity is in the page header (sourced from <code>device.json</code>).</p>
           <dl class="kv">
             <dt>deviceType</dt><dd class="mono">{desc.parsed.device_type}</dd>
             <dt>friendlyName</dt><dd>{desc.parsed.friendly_name}</dd>
@@ -298,10 +316,44 @@ function contributorUrl(c: string): string {
 
 <style>
   .device-hero { margin-bottom: var(--space-6); }
-  .device-hero .page-lede { margin-bottom: var(--space-3); font-size: var(--text-md); }
-  .device-hero .page-lede code { font-size: 0.85em; }
-  .device-hero .dlna { font-family: var(--font-mono); }
-  .hero-pills { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-3); }
+  .device-tagline {
+    font-size: var(--text-lg);
+    color: var(--text-2);
+    margin: 0 0 var(--space-3) 0;
+    max-width: 70ch;
+  }
+  .device-meta {
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+    margin: 0 0 var(--space-3) 0;
+  }
+  .device-meta code { font-size: 0.85em; }
+  .device-meta .dlna { font-family: var(--font-mono); }
+  .discontinued { color: var(--dd-status-warning); font-weight: 600; }
+  .hero-pills { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: var(--space-3) 0; }
+  .hero-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    margin-top: var(--space-3);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+  }
+  .hero-links a { color: var(--accent); }
+  .meta-missing {
+    margin-top: var(--space-4);
+    padding: var(--space-3);
+    background: var(--surface);
+    border-left: 2px solid var(--dd-status-warning);
+    font-size: var(--text-sm);
+    color: var(--text-2);
+  }
+  .device-reported-note {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    margin: 0 0 var(--space-3) 0;
+    max-width: 70ch;
+  }
 
   .section-title {
     font-size: var(--text-xl);

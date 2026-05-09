@@ -1,74 +1,352 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
-import { groupCaptures, decisionSummary, driveSummary, formatDate } from '../lib/devices';
+import { groupCaptures } from '../lib/devices';
 
 const captures = await getCollection('captures');
-const corpus = groupCaptures(captures);
-const devices = Array.from(corpus.values()).sort((a, b) =>
-  (a.vendor ?? a.slug).localeCompare(b.vendor ?? b.slug),
-);
+const deviceMetas = await getCollection('devices');
+const corpus = groupCaptures(captures, deviceMetas);
+const deviceCount = corpus.size;
 ---
-<Layout title="Home" description="A corpus of audio renderer captures: descriptors, library decisions, drive transcripts. Browse the state of every device tutti has seen on a real LAN.">
-  <header>
-    <p class="page-eyebrow">Corpus</p>
-    <h1 class="page-title">Devices</h1>
-    <p class="page-lede">
-      What every audio renderer in this corpus actually does on the wire,
-      what each Go control-point library decides about it, and what tutti's
-      drive test observed end to end.
+<Layout title="Home" description="Audio renderer probe — what every device on your LAN actually does on the wire, and where each control-point library agrees with you.">
+  <header class="hero">
+    <p class="page-eyebrow">audio renderer probe</p>
+    <h1 class="hero-title">tutti</h1>
+    <p class="hero-lede">
+      An audio renderer is a device that plays sound when a control
+      point hands it a URL. Sonos, WiiM, Eversolo, Yamaha receivers,
+      smart speakers — most of them speak UPnP / DLNA. They <em>should</em>
+      all just work. They don't. tutti tells you why.
     </p>
+    <div class="hero-cta">
+      <a class="cta-primary" href="/devices/">Browse {deviceCount} device{deviceCount === 1 ? '' : 's'} →</a>
+      <a class="cta-secondary" href="/contribute/">Add yours</a>
+    </div>
   </header>
 
-  <section>
-    <table class="data devices-table">
-      <thead>
-        <tr>
-          <th>Vendor</th>
-          <th>Model</th>
-          <th>Discovery</th>
-          <th>Drive</th>
-          <th>Last captured</th>
-          <th>Captures</th>
-        </tr>
-      </thead>
-      <tbody>
-        {devices.map(d => {
-          const dec = decisionSummary(d.headlineDevice);
-          const drv = driveSummary(d.headlineDevice);
-          return (
-            <tr>
-              <td>{d.vendor ?? '—'}</td>
-              <td><a href={`/devices/${d.slug}/`}>{d.model ?? d.slug}</a></td>
-              <td><span class:list={['tag', dec.tone === 'mute' ? '' : dec.tone]}>{dec.label}</span></td>
-              <td><span class:list={['tag', drv.tone === 'mute' ? '' : drv.tone]}>{drv.label}</span></td>
-              <td class="mono">{formatDate(d.latest.data.captured_at)}</td>
-              <td class="mono">{d.history.length}</td>
-            </tr>
-          );
-        })}
-      </tbody>
-    </table>
+  <section class="why">
+    <h2 class="section-title">Why this exists</h2>
+    <p class="section-prose">
+      A renderer that won't show up in your music client is almost always
+      a parser mismatch, not a network problem. The device announces
+      itself fine; the client's library rejects it because the descriptor
+      doesn't match what the parser expected. <em>Different libraries reject
+      different devices.</em> A device might cast cleanly from Sonos's app
+      but stay invisible to a Subsonic client running on the same LAN.
+    </p>
+    <p class="section-prose">
+      No tool tells you which library rejected your device and on what
+      grounds. tutti is that tool: it walks the network, runs the
+      device's descriptor through every Go control-point library it
+      knows about, drives a real cast end to end, and writes a
+      paste-ready bundle of evidence to disk. The corpus on this site
+      is what tutti has captured against real devices on real LANs.
+    </p>
+  </section>
 
-    {devices.length === 0 && (
-      <p class="empty-note">
-        No captures yet. See <a href="/contribute/">Contribute</a> to add the
-        first device.
-      </p>
-    )}
+  <section class="flow">
+    <h2 class="section-title">How streaming is supposed to work</h2>
+    <p class="section-prose">
+      Five stages, with the control point on the left and the renderer
+      on the right. Solid moss arrows are control-point initiated;
+      dashed grey arrows are the device's response.
+    </p>
+
+    <div class="flow-diagram">
+      <svg viewBox="0 0 1100 720" role="img" aria-label="UPnP audio streaming flow: discovery via SSDP M-SEARCH, descriptor fetch, AVTransport SetAVTransportURI + Play, renderer fetches the media URL, control point polls transport state.">
+        <!-- lane backgrounds -->
+        <rect x="40" y="60" width="220" height="640" fill="#ffffff" stroke="#e0e0e0" stroke-width="1" rx="3"/>
+        <rect x="840" y="60" width="220" height="640" fill="#ffffff" stroke="#e0e0e0" stroke-width="1" rx="3"/>
+
+        <!-- lane labels -->
+        <text x="150" y="45" text-anchor="middle" font-family="IBM Plex Mono, Menlo, monospace" font-size="10" font-weight="700" fill="#707070" letter-spacing="1.4">CONTROL POINT</text>
+        <text x="950" y="45" text-anchor="middle" font-family="IBM Plex Mono, Menlo, monospace" font-size="10" font-weight="700" fill="#707070" letter-spacing="1.4">RENDERER</text>
+        <text x="550" y="45" text-anchor="middle" font-family="IBM Plex Mono, Menlo, monospace" font-size="10" font-weight="700" fill="#707070" letter-spacing="1.4">NETWORK</text>
+
+        <!-- step 1: M-SEARCH -->
+        <text x="150" y="100" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="13" font-weight="600" fill="#0a0a0a">your music app</text>
+        <text x="150" y="118" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" fill="#707070">looking for renderers</text>
+
+        <line x1="260" y1="120" x2="840" y2="120" stroke="#4a6741" stroke-width="2"/>
+        <polygon points="840,120 826,114 826,126" fill="#4a6741"/>
+        <text x="550" y="113" text-anchor="middle" font-family="IBM Plex Mono, Menlo, monospace" font-size="11" font-weight="600" fill="#4a6741" letter-spacing="0.5">1. M-SEARCH ssdp:discover</text>
+        <text x="550" y="135" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="#707070" font-style="italic">UDP multicast 239.255.255.250:1900</text>
+
+        <!-- step 2: response -->
+        <line x1="840" y1="180" x2="260" y2="180" stroke="#707070" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <polygon points="260,180 274,174 274,186" fill="#707070"/>
+        <text x="550" y="172" text-anchor="middle" font-family="IBM Plex Mono, Menlo, monospace" font-size="11" font-weight="600" fill="#707070" letter-spacing="0.5">2. HTTP/1.1 response</text>
+        <text x="550" y="194" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="#707070" font-style="italic">USN, LOCATION, SERVER, BOOTID</text>
+
+        <text x="950" y="160" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="13" font-weight="600" fill="#0a0a0a">"here I am"</text>
+        <text x="950" y="178" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" fill="#707070">describes its services</text>
+
+        <!-- divider 1 -->
+        <line x1="60" y1="230" x2="1040" y2="230" stroke="#e0e0e0" stroke-width="1" stroke-dasharray="2,4"/>
+
+        <!-- step 3: GET descriptor -->
+        <line x1="260" y1="270" x2="840" y2="270" stroke="#4a6741" stroke-width="2"/>
+        <polygon points="840,270 826,264 826,276" fill="#4a6741"/>
+        <text x="550" y="263" text-anchor="middle" font-family="IBM Plex Mono, Menlo, monospace" font-size="11" font-weight="600" fill="#4a6741" letter-spacing="0.5">3. GET &lt;LOCATION&gt;</text>
+        <text x="550" y="285" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="#707070" font-style="italic">fetch the device descriptor XML</text>
+
+        <!-- step 4: descriptor response -->
+        <line x1="840" y1="330" x2="260" y2="330" stroke="#707070" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <polygon points="260,330 274,324 274,336" fill="#707070"/>
+        <text x="550" y="322" text-anchor="middle" font-family="IBM Plex Mono, Menlo, monospace" font-size="11" font-weight="600" fill="#707070" letter-spacing="0.5">4. &lt;root&gt;…&lt;/root&gt;</text>
+        <text x="550" y="344" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="#707070" font-style="italic">deviceType, services, control URLs</text>
+
+        <text x="150" y="320" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="13" font-weight="600" fill="#0a0a0a">parses the descriptor</text>
+        <text x="150" y="338" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" fill="#707070">finds AVTransport service</text>
+        <text x="150" y="356" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" fill="#a8443a" font-weight="600">most failures land here</text>
+
+        <!-- divider 2 -->
+        <line x1="60" y1="390" x2="1040" y2="390" stroke="#e0e0e0" stroke-width="1" stroke-dasharray="2,4"/>
+
+        <!-- step 5: SetAVTransportURI -->
+        <line x1="260" y1="430" x2="840" y2="430" stroke="#4a6741" stroke-width="2"/>
+        <polygon points="840,430 826,424 826,436" fill="#4a6741"/>
+        <text x="550" y="422" text-anchor="middle" font-family="IBM Plex Mono, Menlo, monospace" font-size="11" font-weight="600" fill="#4a6741" letter-spacing="0.5">5. SOAP: SetAVTransportURI</text>
+        <text x="550" y="444" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="#707070" font-style="italic">+ DIDL-Lite envelope (title, art, format)</text>
+
+        <!-- step 6: Play -->
+        <line x1="260" y1="490" x2="840" y2="490" stroke="#4a6741" stroke-width="2"/>
+        <polygon points="840,490 826,484 826,496" fill="#4a6741"/>
+        <text x="550" y="482" text-anchor="middle" font-family="IBM Plex Mono, Menlo, monospace" font-size="11" font-weight="600" fill="#4a6741" letter-spacing="0.5">6. SOAP: Play</text>
+        <text x="550" y="504" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="#707070" font-style="italic">device transitions: STOPPED → TRANSITIONING → PLAYING</text>
+
+        <!-- step 7: device fetches media -->
+        <line x1="950" y1="540" x2="950" y2="600" stroke="#707070" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <polygon points="950,600 944,586 956,586" fill="#707070"/>
+        <text x="950" y="560" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="13" font-weight="600" fill="#0a0a0a">renderer fetches the URL</text>
+        <text x="950" y="578" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" fill="#707070">decodes, sends to DAC</text>
+        <text x="950" y="618" text-anchor="middle" font-family="IBM Plex Mono, Menlo, monospace" font-size="10" fill="#707070">HTTP GET, separate TCP connection</text>
+
+        <!-- divider 3 -->
+        <line x1="60" y1="640" x2="1040" y2="640" stroke="#e0e0e0" stroke-width="1" stroke-dasharray="2,4"/>
+
+        <!-- step 8: poll -->
+        <line x1="260" y1="680" x2="840" y2="680" stroke="#4a6741" stroke-width="2"/>
+        <polygon points="840,680 826,674 826,686" fill="#4a6741"/>
+        <text x="550" y="672" text-anchor="middle" font-family="IBM Plex Mono, Menlo, monospace" font-size="11" font-weight="600" fill="#4a6741" letter-spacing="0.5">7. SOAP: GetTransportInfo / GetPositionInfo</text>
+        <text x="550" y="694" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="#707070" font-style="italic">polls state + position; updates UI</text>
+      </svg>
+    </div>
+  </section>
+
+  <section class="failure-modes">
+    <h2 class="section-title">Where it goes wrong</h2>
+    <p class="section-prose">
+      tutti exists because each of these failure modes is invisible
+      from the music app's UI — the device just doesn't show up, or
+      shows up and then doesn't play. The corpus surfaces them
+      explicitly.
+    </p>
+
+    <div class="failure-grid">
+      <div class="failure-card">
+        <p class="failure-stage">stage 4</p>
+        <h3 class="failure-title">Parser mismatch</h3>
+        <p class="failure-body">
+          The library walks the descriptor and rejects the device
+          because <code>deviceType</code> isn't the exact string it
+          expected, or the control URL didn't parse, or a UUID-shaped
+          field doesn't match RFC 4122. Different libraries reject
+          different shapes. The user sees: device missing from picker.
+        </p>
+        <p class="failure-evidence">
+          tutti shows: per-library decision matrix on each device's page.
+        </p>
+      </div>
+
+      <div class="failure-card">
+        <p class="failure-stage">stage 5</p>
+        <h3 class="failure-title">Format under-announced</h3>
+        <p class="failure-body">
+          Device's <code>GetProtocolInfo</code> Sink list omits a
+          format the device <em>actually</em> plays (DSD on
+          Plutinosoft-derived stacks is the canonical case). Control
+          points that intersect their request format against the Sink
+          list will never offer it. The user sees: format greyed out,
+          even though it works in another app.
+        </p>
+        <p class="failure-evidence">
+          tutti shows: announced sinks vs. drive-test outcomes side by
+          side.
+        </p>
+      </div>
+
+      <div class="failure-card">
+        <p class="failure-stage">stage 5</p>
+        <h3 class="failure-title">Metadata surface mismatch</h3>
+        <p class="failure-body">
+          Device renders the artist/title from the file's embedded
+          tags rather than the DIDL-Lite envelope the control point
+          sent — or vice versa. The user sees: wrong song name or
+          missing cover art on the device's display, even though
+          playback is fine.
+        </p>
+        <p class="failure-evidence">
+          tutti shows: round-trip status (matched / mismatched /
+          absent) and which surface the device honored.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-bottom">
+    <h2 class="section-title">What tutti's seen so far</h2>
+    <p class="section-prose">
+      Every device profiled, every capture, every drive transcript.
+      Add yours: run the binary against your LAN, paste the bundle as
+      a merge request.
+    </p>
+    <div class="hero-cta">
+      <a class="cta-primary" href="/devices/">Browse the corpus →</a>
+      <a class="cta-secondary" href="/contribute/">Add a device</a>
+    </div>
   </section>
 </Layout>
 
 <style>
-  .devices-table th:nth-child(5),
-  .devices-table th:nth-child(6),
-  .devices-table td:nth-child(5),
-  .devices-table td:nth-child(6) {
-    white-space: nowrap;
+  .hero {
+    padding: var(--space-7) 0 var(--space-6) 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: var(--space-7);
   }
-  .empty-note {
-    margin-top: var(--space-5);
-    color: var(--text-muted);
+  .hero-title {
+    font-size: clamp(3.5rem, 8vw, 6rem);
+    font-weight: 700;
+    margin: 0 0 var(--space-3) 0;
+    color: var(--accent);
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+  .hero-lede {
+    font-size: var(--text-xl);
+    color: var(--text-2);
+    max-width: 60ch;
+    margin: 0 0 var(--space-5) 0;
+    line-height: 1.45;
+  }
+  .hero-lede em { color: var(--text); font-style: normal; font-weight: 600; }
+  .hero-cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+  .cta-primary {
+    display: inline-block;
+    padding: var(--space-3) var(--space-5);
+    background: var(--accent);
+    color: var(--bg);
+    border-radius: var(--radius);
+    font-weight: 600;
+    font-family: var(--font-mono);
     font-size: var(--text-sm);
+    letter-spacing: 0.04em;
+  }
+  .cta-primary:hover { background: var(--dd-moss-500); text-decoration: none; }
+  .cta-secondary {
+    display: inline-block;
+    padding: var(--space-3) var(--space-5);
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius);
+    font-weight: 600;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    letter-spacing: 0.04em;
+  }
+  .cta-secondary:hover { background: var(--surface); text-decoration: none; }
+
+  .section-title {
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    color: var(--text);
+    margin: var(--space-7) 0 var(--space-4) 0;
+    letter-spacing: -0.015em;
+  }
+  .section-prose {
+    color: var(--text-2);
+    max-width: 70ch;
+    margin: 0 0 var(--space-3) 0;
+    font-size: var(--text-md);
+    line-height: 1.6;
+  }
+  .section-prose em {
+    color: var(--text);
+    font-style: italic;
+    font-weight: 500;
+  }
+  .section-prose code {
+    font-size: 0.85em;
+  }
+
+  .flow-diagram {
+    margin: var(--space-5) 0;
+    padding: var(--space-4);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow-x: auto;
+  }
+  .flow-diagram svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .failure-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-4);
+    margin-top: var(--space-5);
+  }
+  .failure-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: var(--space-5);
+  }
+  .failure-stage {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 0 0 var(--space-2) 0;
+  }
+  .failure-title {
+    font-size: var(--text-lg);
+    font-weight: 700;
+    margin: 0 0 var(--space-3) 0;
+    color: var(--accent);
+  }
+  .failure-body {
+    color: var(--text-2);
+    font-size: var(--text-sm);
+    line-height: 1.6;
+    margin: 0 0 var(--space-3) 0;
+  }
+  .failure-body code {
+    font-size: 0.9em;
+  }
+  .failure-evidence {
+    color: var(--text-muted);
+    font-size: var(--text-xs);
+    margin: 0;
+    padding-top: var(--space-2);
+    border-top: 1px solid var(--border);
+    font-style: italic;
+  }
+
+  .cta-bottom {
+    margin-top: var(--space-8);
+    padding-top: var(--space-7);
+    border-top: 1px solid var(--border);
   }
 </style>

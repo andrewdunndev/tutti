@@ -7,11 +7,17 @@
 import type { CollectionEntry } from 'astro:content';
 
 export type CaptureEntry = CollectionEntry<'captures'>;
+export type DeviceMetaEntry = CollectionEntry<'devices'>;
 
 export interface DeviceCorpus {
   slug: string;
+  // Canonical identity: prefer authored device.json; fall back to
+  // capture-derived (descriptor manufacturer + friendlyName/modelName)
+  // when the slug has no device.json yet.
   vendor: string | undefined;
   model: string | undefined;
+  // tagline + links are authored-only; absent when device.json is missing.
+  meta: DeviceMetaEntry['data'] | undefined;
   latest: CaptureEntry;
   history: CaptureEntry[];
   // Headline state pulled from the latest capture's first device entry.
@@ -35,10 +41,24 @@ export function deviceSlugFromEntry(entry: CaptureEntry): string {
  * the latest capture, the full history (newest-first), and a headline
  * device record lifted from the latest manifest's first devices[] entry.
  *
- * Captures whose first devices[] entry slug differs from the path slug
- * still group under the path slug: the path is the canonical anchor.
+ * deviceMetas is the authored device.json collection, indexed by slug.
+ * When a slug has authored metadata, vendor + model come from there
+ * (canonical product identity); otherwise we fall back to descriptor's
+ * manufacturer + modelName, with a final fallback to the friendlyName
+ * (which can leak per-installation tags like "livingroom" — used only
+ * when nothing better exists).
  */
-export function groupCaptures(entries: CaptureEntry[]): Map<string, DeviceCorpus> {
+export function groupCaptures(
+  entries: CaptureEntry[],
+  deviceMetas: DeviceMetaEntry[] = [],
+): Map<string, DeviceCorpus> {
+  const metaBySlug = new Map<string, DeviceMetaEntry>();
+  for (const m of deviceMetas) {
+    // device.json entry id is "<slug>/device" under the base.
+    const slug = m.id.split('/')[0] ?? m.id;
+    metaBySlug.set(slug, m);
+  }
+
   const byDevice = new Map<string, CaptureEntry[]>();
   for (const e of entries) {
     const slug = deviceSlugFromEntry(e);
@@ -53,10 +73,20 @@ export function groupCaptures(entries: CaptureEntry[]): Map<string, DeviceCorpus
     const latest = list[0];
     const headline = latest?.data.devices[0];
     if (!latest || !headline) continue;
+    const meta = metaBySlug.get(slug);
+    const vendor = meta?.data.vendor ?? headline.vendor;
+    const model =
+      meta?.data.product_name
+      ?? (headline.descriptor?.parsed.model_name && headline.descriptor.parsed.model_name !== 'AV Renderer Device'
+        ? headline.descriptor.parsed.model_name
+        : undefined)
+      ?? headline.descriptor?.parsed.friendly_name
+      ?? slug;
     out.set(slug, {
       slug,
-      vendor: headline.vendor,
-      model: headline.model ?? headline.descriptor?.parsed.friendly_name,
+      vendor,
+      model,
+      meta: meta?.data,
       latest,
       history: list,
       headlineDevice: headline,

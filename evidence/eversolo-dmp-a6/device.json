@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "vendor": "EVERSOLO",
+  "product_name": "DMP-A6 Master Gen 2",
+  "tagline": "Network audio streamer with built-in DAC, DSD passthrough, and HDMI inputs. Plutinosoft Platinum SDK on the UPnP renderer side.",
+  "links": {
+    "manufacturer": "https://www.eversolo.com/Product/details/14.html",
+    "support": "https://www.eversolo.com/support"
+  }
+}

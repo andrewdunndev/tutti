@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tutti.dunn.dev/schema/device.v1.json",
+  "title": "tutti device metadata, schema v1",
+  "description": "Per-device authored metadata that complements per-capture manifests. Lives at evidence/<slug>/device.json. Names the device by its canonical product identity (vendor + product_name) rather than by whatever friendlyName the operator typed into the device's settings panel.",
+  "type": "object",
+  "required": ["schema_version", "vendor", "product_name"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "const": 1 },
+    "vendor": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Canonical manufacturer name as the manufacturer brands themselves (EVERSOLO, Sonos, WiiM)."
+    },
+    "product_name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Canonical product name as the manufacturer brands the product (DMP-A6 Master Gen 2). Distinct from the device's friendlyName, which the operator can customise (DMP-A6(livingroom)) and which therefore leaks setup details."
+    },
+    "tagline": {
+      "type": "string",
+      "description": "One short sentence describing what the product is. Optional."
+    },
+    "discontinued": {
+      "type": "boolean",
+      "description": "Set true when the manufacturer no longer sells the product. The site flags discontinued devices so contributors don't expect firmware updates that aren't coming."
+    },
+    "links": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Outbound links for someone troubleshooting the device. All optional; the site renders only the keys actually present.",
+      "properties": {
+        "manufacturer": { "type": "string", "format": "uri", "description": "Primary product page on the manufacturer's site." },
+        "support":      { "type": "string", "format": "uri", "description": "Support / contact page for the product." },
+        "firmware":     { "type": "string", "format": "uri", "description": "Firmware downloads or release notes page." },
+        "manual":       { "type": "string", "format": "uri", "description": "User manual (PDF or web)." },
+        "purchase":     { "type": "string", "format": "uri", "description": "A current purchase page; useful for reproducing a capture against a fresh unit." }
+      }
+    }
+  }
+}

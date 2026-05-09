@@ -175,8 +175,35 @@ const captures = defineCollection({
   schema: manifestSchema,
 });
 
-export const collections = { captures };
+// devices: per-device authored metadata at ../evidence/<slug>/device.json.
+// Mirrors schema/device.v1.json. Optional per device; the site falls back
+// to capture-derived identity when device.json is absent.
+const deviceMetaSchema = z.object({
+  schema_version: z.literal(1),
+  vendor: z.string().min(1),
+  product_name: z.string().min(1),
+  tagline: z.string().optional(),
+  discontinued: z.boolean().optional(),
+  links: z.object({
+    manufacturer: z.string().url().optional(),
+    support: z.string().url().optional(),
+    firmware: z.string().url().optional(),
+    manual: z.string().url().optional(),
+    purchase: z.string().url().optional(),
+  }).optional(),
+});
+
+const devices = defineCollection({
+  loader: glob({
+    pattern: '*/device.json',
+    base: '../evidence',
+  }),
+  schema: deviceMetaSchema,
+});
+
+export const collections = { captures, devices };
 export type Manifest = z.infer<typeof manifestSchema>;
 export type CaptureDevice = z.infer<typeof device>;
 export type CaptureDecision = z.infer<typeof decision>;
 export type CaptureDriveRun = z.infer<typeof driveRun>;
+export type DeviceMeta = z.infer<typeof deviceMetaSchema>;

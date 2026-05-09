@@ -9,7 +9,8 @@ const { title, description } = Astro.props;
 const pageTitle = title === 'Home' ? 'tutti.dunn.dev' : `${title} — tutti.dunn.dev`;
 
 const nav = [
-  { href: '/', label: 'Devices' },
+  { href: '/', label: 'Home' },
+  { href: '/devices/', label: 'Devices' },
   { href: '/contribute/', label: 'Contribute' },
   { href: 'https://gitlab.com/dunn.dev/tutti', label: 'Source', external: true },
 ];
