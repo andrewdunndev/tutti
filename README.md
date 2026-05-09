@@ -123,6 +123,27 @@ sudo spctl --add ./tutti                        # add to allowed list
 A signed Homebrew tap (`brew install dunn.dev/tap/tutti`) is on the
 roadmap once notarization is wired up.
 
+### Windows operational notes
+
+The Windows binary ships as `tutti-windows-amd64.exe`. Two things to
+know on first run:
+
+- **Windows Firewall** prompts when tutti binds UDP sockets for
+  SSDP/mDNS multicast and the transient HTTP server it uses to serve
+  test tones. Click "Allow on private networks" once; the prompt
+  does not return.
+- **Don't run inside WSL.** WSL networking is NAT'd; tutti can't see
+  the host's LAN devices from there. Run `tutti.exe` from native
+  Windows (PowerShell or cmd). If a clean native run finds nothing,
+  pass `--interface "Ethernet"` (or whatever your real NIC is named
+  in `ipconfig`) to bypass virtual interfaces (Hyper-V, VPN tunnels,
+  Docker Desktop bridges) that claim multicast capability without
+  delivering.
+
+Windows binaries are not yet code-signed; SmartScreen will warn on
+first run, with "More info" → "Run anyway" through. Code signing for
+Windows is on the roadmap.
+
 [rel]: https://gitlab.com/dunn.dev/tutti/-/releases
 
 ## Quickstart
@@ -427,7 +448,7 @@ your forge profile.
 ## Library compare mode
 
 ```sh
-tutti diff-libs --descriptor http://192.168.1.42:1054/description.xml
+tutti diff-libs --descriptor http://<DEVICE_IP>:1054/description.xml
 ```
 
 Hands the same descriptor to every Go control-point library tutti
@@ -459,7 +480,7 @@ the failing capture-id at https://gitlab.com/dunn.dev/tutti/-/issues.
 ```
 $ tutti capture --drive
 Error: descriptor fetch failed for eversolo-dmp-a6 after 3 attempts
-(http://192.168.1.42:1054/description.xml: connection refused).
+(http://<DEVICE_IP>:1054/description.xml: connection refused).
 Suggested next step: confirm the device is on (its UDN was advertised
 2 seconds ago) and re-run. If the device is reachable but tutti can't
 reach it, see `tutti doctor`.
