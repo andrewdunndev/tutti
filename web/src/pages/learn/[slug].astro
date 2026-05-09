@@ -1,0 +1,202 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('learn');
+  return entries.map(entry => ({
+    params: { slug: entry.id },
+    props: { entry, all: entries },
+  }));
+}
+
+const { entry, all } = Astro.props;
+const { Content } = await render(entry);
+
+const others = all
+  .filter(e => e.id !== entry.id)
+  .sort((a, b) => a.data.order - b.data.order);
+---
+<Layout title={entry.data.title} description={entry.data.description}>
+  <header>
+    <p class="page-eyebrow">{entry.data.eyebrow}</p>
+    <h1 class="page-title">{entry.data.title}</h1>
+    <p class="page-lede">{entry.data.description}</p>
+  </header>
+
+  <article class="prose">
+    <Content />
+  </article>
+
+  <aside class="see-also">
+    <p class="see-also-label">See also</p>
+    <ul class="see-also-list">
+      {others.map(o => (
+        <li>
+          <a href={`/learn/${o.id}/`}>
+            <span class="see-also-eyebrow">{o.data.eyebrow}</span>
+            <span class="see-also-title">{o.data.title}</span>
+          </a>
+        </li>
+      ))}
+      <li>
+        <a href="/devices/">
+          <span class="see-also-eyebrow">Corpus</span>
+          <span class="see-also-title">Browse profiled devices</span>
+        </a>
+      </li>
+    </ul>
+  </aside>
+</Layout>
+
+<style>
+  .prose {
+    max-width: 78ch;
+    line-height: 1.65;
+    color: var(--text);
+    font-size: var(--text-md);
+  }
+  .prose :global(h2) {
+    font-size: var(--text-xl);
+    font-weight: 700;
+    margin: var(--space-7) 0 var(--space-3) 0;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+  .prose :global(h2:first-child) { margin-top: 0; }
+  .prose :global(h3) {
+    font-size: var(--text-lg);
+    font-weight: 600;
+    margin: var(--space-5) 0 var(--space-2) 0;
+    color: var(--text);
+  }
+  .prose :global(p) {
+    margin: 0 0 var(--space-3) 0;
+    color: var(--text-2);
+  }
+  .prose :global(p strong),
+  .prose :global(p em) { color: var(--text); }
+  .prose :global(strong) { font-weight: 600; }
+  .prose :global(em) { font-style: italic; }
+  .prose :global(a) {
+    color: var(--accent);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--accent) 40%, transparent);
+    text-underline-offset: 2px;
+  }
+  .prose :global(a:hover) { text-decoration-color: var(--accent); }
+  .prose :global(code) {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.05rem 0.35rem;
+  }
+  .prose :global(pre) {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: var(--space-3) var(--space-4);
+    margin: var(--space-4) 0;
+    overflow-x: auto;
+    font-size: var(--text-sm);
+    line-height: 1.5;
+  }
+  .prose :global(pre code) {
+    background: transparent;
+    border: none;
+    padding: 0;
+    font-size: inherit;
+  }
+  .prose :global(ul),
+  .prose :global(ol) {
+    margin: 0 0 var(--space-3) var(--space-5);
+    color: var(--text-2);
+  }
+  .prose :global(li) { margin-bottom: var(--space-2); }
+  .prose :global(li > p) { margin-bottom: var(--space-2); }
+  .prose :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: var(--space-4) 0;
+    font-size: var(--text-sm);
+  }
+  .prose :global(table th),
+  .prose :global(table td) {
+    text-align: left;
+    padding: var(--space-2) var(--space-3);
+    border-bottom: 1px solid var(--border);
+  }
+  .prose :global(table th) {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    font-weight: 700;
+  }
+  .prose :global(blockquote) {
+    border-left: 2px solid var(--accent);
+    padding: var(--space-2) var(--space-4);
+    margin: var(--space-4) 0;
+    color: var(--text-2);
+    font-style: italic;
+  }
+  .prose :global(hr) {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: var(--space-6) 0;
+  }
+
+  .see-also {
+    margin-top: var(--space-8);
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--border);
+  }
+  .see-also-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin: 0 0 var(--space-3) 0;
+  }
+  .see-also-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--space-2);
+  }
+  .see-also-list li { margin: 0; }
+  .see-also-list a {
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-3) var(--space-4);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 120ms;
+  }
+  .see-also-list a:hover {
+    border-color: var(--accent);
+    text-decoration: none;
+  }
+  .see-also-eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+  }
+  .see-also-title {
+    color: var(--text);
+    font-weight: 600;
+    font-size: var(--text-md);
+    margin-top: var(--space-1);
+  }
+  .see-also-list a:hover .see-also-title { color: var(--accent); }
+</style>

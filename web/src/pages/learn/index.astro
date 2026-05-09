@@ -1,0 +1,92 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const entries = (await getCollection('learn')).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+---
+<Layout title="Learn" description="Reference documentation for UPnP/DLNA audio streaming: how it works, why it's finicky, what implements it.">
+  <header>
+    <p class="page-eyebrow">Reference</p>
+    <h1 class="page-title">Learn</h1>
+    <p class="page-lede">
+      Three long-form documents that explain audio streaming end to end:
+      how the protocols work, where they go wrong in practice, and what
+      every device and app in this space is built on. Read in order or
+      jump to the one you need.
+    </p>
+  </header>
+
+  <section>
+    <ul class="learn-list">
+      {entries.map(e => (
+        <li class="learn-item">
+          <a href={`/learn/${e.id}/`} class="learn-link">
+            <p class="learn-eyebrow">{e.data.eyebrow}</p>
+            <h2 class="learn-title">{e.data.title}</h2>
+            <p class="learn-desc">{e.data.description}</p>
+            <span class="learn-arrow">→</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+</Layout>
+
+<style>
+  .learn-list {
+    list-style: none;
+    margin: var(--space-5) 0 0 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-3);
+  }
+  .learn-item { margin: 0; }
+  .learn-link {
+    display: block;
+    padding: var(--space-5);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: inherit;
+    text-decoration: none;
+    position: relative;
+    transition: border-color 120ms;
+  }
+  .learn-link:hover {
+    border-color: var(--accent);
+    text-decoration: none;
+  }
+  .learn-link:hover .learn-title { color: var(--accent); }
+  .learn-eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin: 0 0 var(--space-2) 0;
+  }
+  .learn-title {
+    font-size: var(--text-xl);
+    font-weight: 700;
+    margin: 0 0 var(--space-2) 0;
+    color: var(--text);
+    letter-spacing: -0.01em;
+    transition: color 120ms;
+  }
+  .learn-desc {
+    color: var(--text-2);
+    font-size: var(--text-sm);
+    margin: 0;
+    max-width: 70ch;
+  }
+  .learn-arrow {
+    position: absolute;
+    top: var(--space-5);
+    right: var(--space-5);
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-lg);
+  }
+</style>

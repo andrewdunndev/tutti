@@ -201,7 +201,19 @@ const devices = defineCollection({
   schema: deviceMetaSchema,
 });
 
-export const collections = { captures, devices };
+// learn: long-form reference docs (protocols, why-finicky, implementations).
+// Markdown with frontmatter; rendered as the /learn/<slug>/ page set.
+const learn = defineCollection({
+  loader: glob({ pattern: '*.md', base: './src/content/learn' }),
+  schema: z.object({
+    title: z.string(),
+    eyebrow: z.string(),
+    description: z.string(),
+    order: z.number(),
+  }),
+});
+
+export const collections = { captures, devices, learn };
 export type Manifest = z.infer<typeof manifestSchema>;
 export type CaptureDevice = z.infer<typeof device>;
 export type CaptureDecision = z.infer<typeof decision>;
