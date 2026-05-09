@@ -6,55 +6,163 @@ import Layout from '../layouts/Layout.astro';
     <p class="page-eyebrow">For contributors</p>
     <h1 class="page-title">Add a device</h1>
     <p class="page-lede">
-      tutti runs on your LAN, captures what it sees, and writes a paste-ready
-      bundle to disk. Submitting a capture is a single MR.
+      Run tutti against your LAN, review the capture, submit it.
+      Two submission paths: open a merge request directly, or file
+      an issue if that's easier.
     </p>
   </header>
 
   <section>
-    <h2 class="section-title">1. Run tutti against your LAN</h2>
-    <pre class="code-block">
-# Build from source (binaries land with v0.1.0).
-git clone https://gitlab.com/dunn.dev/tutti.git
+    <h2 class="section-title">1. Get tutti</h2>
+    <p class="section-prose">
+      Pre-built binaries for macOS, Linux, and Windows live on the
+      <a href="https://gitlab.com/dunn.dev/tutti/-/releases" target="_blank" rel="noopener">releases page</a>.
+      Each platform has a one-time setup; pick the block that matches
+      your machine.
+    </p>
+
+    <details class="install-block" open>
+      <summary>macOS (Apple Silicon)</summary>
+      <div class="install-body">
+        <pre><code>curl -LO https://gitlab.com/dunn.dev/tutti/-/releases/permalink/latest/downloads/tutti-darwin-arm64
+chmod +x tutti-darwin-arm64
+xattr -d com.apple.quarantine ./tutti-darwin-arm64
+mv tutti-darwin-arm64 /usr/local/bin/tutti</code></pre>
+        <p class="install-note">
+          Until tutti ships a notarized macOS binary, Gatekeeper
+          quarantines the download. The <code>xattr</code> step is the
+          one-time unquarantine. Alternatively: right-click the file
+          in Finder, choose Open, then click "Open" in the dialog.
+        </p>
+      </div>
+    </details>
+
+    <details class="install-block">
+      <summary>Linux (amd64 or arm64)</summary>
+      <div class="install-body">
+        <pre><code># Pick the arch that matches your machine.
+curl -LO https://gitlab.com/dunn.dev/tutti/-/releases/permalink/latest/downloads/tutti-linux-amd64
+# or:
+curl -LO https://gitlab.com/dunn.dev/tutti/-/releases/permalink/latest/downloads/tutti-linux-arm64
+
+chmod +x tutti-linux-*
+sudo mv tutti-linux-* /usr/local/bin/tutti</code></pre>
+        <p class="install-note">
+          Static binary, no runtime dependencies. Runs on any modern
+          Linux that can bind UDP/1900 + UDP/5353. Multicast must
+          actually be allowed on the interface (Wi-Fi AP isolation
+          and IGMP snooping are common silent killers).
+        </p>
+      </div>
+    </details>
+
+    <details class="install-block">
+      <summary>Windows (amd64)</summary>
+      <div class="install-body">
+        <pre><code># In PowerShell.
+Invoke-WebRequest `
+  -Uri https://gitlab.com/dunn.dev/tutti/-/releases/permalink/latest/downloads/tutti-windows-amd64.exe `
+  -OutFile tutti.exe</code></pre>
+        <p class="install-note">
+          SmartScreen warns on first run because the binary isn't
+          code-signed yet. Click "More info" → "Run anyway." Windows
+          Firewall will also prompt the first time tutti binds for
+          SSDP/mDNS multicast — allow on private networks. Don't run
+          inside WSL: WSL networking is NAT'd and can't see the
+          host's LAN devices.
+        </p>
+      </div>
+    </details>
+
+    <details class="install-block">
+      <summary>From source (any platform)</summary>
+      <div class="install-body">
+        <pre><code>git clone https://gitlab.com/dunn.dev/tutti.git
 cd tutti
 make build
+# binary lands at ./tutti</code></pre>
+        <p class="install-note">
+          Requires Go 1.25 or newer. Useful for development; for
+          submitting captures the released binaries are fine.
+        </p>
+      </div>
+    </details>
+  </section>
 
-# Capture the LAN. Drive runs are opt-in via --drive; tutti refuses
-# to interrupt a device that's currently in PLAYING state unless you
-# also pass --force.
-./tutti capture --drive --contributor github:your-handle</pre>
+  <section>
+    <h2 class="section-title">2. Capture the LAN</h2>
+    <pre><code>./tutti capture --drive --contributor github:your-handle</code></pre>
     <p class="section-prose">
       Output lands in <code>./capture-&lt;timestamp&gt;-&lt;host&gt;/</code>. Open
-      the directory and review what tutti wrote: SSDP/mDNS dumps, the
-      device descriptor, GetProtocolInfo sink list, and per-tone drive
-      transcripts. Edit <code>notes.md</code> if there's context worth adding
-      ("the device is slow to wake," "I had to disable IPv6," etc.).
+      the directory and review what tutti wrote: SSDP/mDNS dumps,
+      device descriptors, GetProtocolInfo sink lists, and per-tone
+      drive transcripts. Edit <code>notes.md</code> if there's context
+      worth adding ("the device is slow to wake," "I had to disable
+      IPv6," etc.).
+    </p>
+    <p class="section-prose">
+      <code>--drive</code> opt-in: tutti calls
+      <code>GetTransportInfo</code> first and refuses to interrupt a
+      device that's currently <code>PLAYING</code>. Pass <code>--force</code>
+      if you really do want to interrupt.
+    </p>
+    <p class="section-prose">
+      <code>--contributor</code> takes a forge-prefixed handle
+      (<code>github:</code> or <code>gitlab:</code>); the manifest stores
+      it and the site links your profile from any capture you
+      submit. Anonymous captures are accepted (omit the flag).
     </p>
   </section>
 
   <section>
-    <h2 class="section-title">2. Validate locally</h2>
-    <pre class="code-block">make validate DIR=./capture-&lt;timestamp&gt;-&lt;host&gt;</pre>
+    <h2 class="section-title">3. Validate locally</h2>
+    <pre><code>./tutti validate ./capture-&lt;timestamp&gt;-&lt;host&gt;</code></pre>
     <p class="section-prose">
-      The same validator runs in CI. If it fails locally, the failure
-      message tells you the next action — schema-shape, vacuity rule,
-      or redaction-not-recorded. CI will reject the MR with the same
-      message.
+      The validator catches schema-shape issues, vacuity (e.g. zero
+      SSDP responses + zero mDNS records), and missing redaction
+      records. CI runs the same validator on submission. If it
+      fails locally, the failure message names the next action.
     </p>
   </section>
 
   <section>
-    <h2 class="section-title">3. Submit as a merge request</h2>
+    <h2 class="section-title">4. Submit</h2>
     <p class="section-prose">
-      Move the capture into the corpus tree:
+      Two paths. Pick whichever is friction-free for you; the result
+      is the same — your capture lands in the corpus and the site
+      rebuilds.
     </p>
-    <pre class="code-block">mkdir -p evidence/&lt;vendor&gt;-&lt;model&gt;/captures/
-mv ./capture-&lt;ts&gt;-&lt;host&gt; evidence/&lt;vendor&gt;-&lt;model&gt;/captures/&lt;ts&gt;-&lt;contributor&gt;
-# Open an MR on https://gitlab.com/dunn.dev/tutti</pre>
-    <p class="section-prose">
-      The site rebuilds on merge. Your capture appears in the device
-      list and gets its own page within minutes.
-    </p>
+
+    <div class="submit-grid">
+      <article class="submit-card">
+        <p class="submit-eyebrow">faster</p>
+        <h3 class="submit-title">Open a merge request</h3>
+        <pre><code>mkdir -p evidence/&lt;vendor&gt;-&lt;model&gt;/captures/
+mv ./capture-&lt;ts&gt;-&lt;host&gt; \
+   evidence/&lt;vendor&gt;-&lt;model&gt;/captures/&lt;ts&gt;-&lt;contributor&gt;</code></pre>
+        <p class="submit-prose">
+          Fork the repo, commit the capture directory under
+          <code>evidence/</code>, push, open the MR. The MR template
+          covers the pre-submit checklist; CI validates the bundle
+          and your branch merges on green.
+        </p>
+        <a class="submit-cta" href="https://gitlab.com/dunn.dev/tutti/-/merge_requests/new" target="_blank" rel="noopener">Open an MR →</a>
+      </article>
+
+      <article class="submit-card">
+        <p class="submit-eyebrow">simpler</p>
+        <h3 class="submit-title">File an issue</h3>
+        <pre><code>tar czf my-capture.tar.gz ./capture-&lt;ts&gt;-&lt;host&gt;/
+# attach the tarball to the issue</code></pre>
+        <p class="submit-prose">
+          If MRs aren't your workflow, file an issue with the
+          capture attached. A maintainer will fold it into the
+          corpus on your behalf. The issue template walks you
+          through what's useful.
+        </p>
+        <a class="submit-cta" href="https://gitlab.com/dunn.dev/tutti/-/issues/new?issuable_template=Device%20capture" target="_blank" rel="noopener">File an issue →</a>
+      </article>
+    </div>
   </section>
 
   <section>
@@ -74,7 +182,23 @@ mv ./capture-&lt;ts&gt;-&lt;host&gt; evidence/&lt;vendor&gt;-&lt;model&gt;/captu
 </Layout>
 
 <style>
-  .code-block {
+  .section-title {
+    font-size: var(--text-xl);
+    font-weight: 700;
+    margin: var(--space-7) 0 var(--space-3) 0;
+    letter-spacing: -0.01em;
+  }
+  .section-prose {
+    color: var(--text-2);
+    max-width: 70ch;
+    margin: 0 0 var(--space-3) 0;
+    line-height: 1.6;
+  }
+  .section-prose code {
+    font-size: 0.85em;
+  }
+
+  pre {
     background: var(--bg);
     border: 1px solid var(--border);
     border-radius: var(--radius);
@@ -85,14 +209,82 @@ mv ./capture-&lt;ts&gt;-&lt;host&gt; evidence/&lt;vendor&gt;-&lt;model&gt;/captu
     line-height: 1.55;
     margin: var(--space-3) 0;
   }
-  .section-title {
-    font-size: var(--text-xl);
-    font-weight: 700;
-    margin: var(--space-7) 0 var(--space-3) 0;
-    letter-spacing: -0.01em;
+  pre code { background: transparent; border: none; padding: 0; }
+
+  .install-block {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin: var(--space-3) 0;
   }
-  .section-prose {
+  .install-block > summary {
+    padding: var(--space-3) var(--space-4);
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text);
+    list-style: none;
+  }
+  .install-block > summary::-webkit-details-marker { display: none; }
+  .install-block > summary::before {
+    content: '▸';
+    margin-right: var(--space-2);
+    color: var(--text-muted);
+    display: inline-block;
+    transition: transform 120ms;
+  }
+  .install-block[open] > summary::before { transform: rotate(90deg); }
+  .install-block[open] > summary { border-bottom: 1px solid var(--border); }
+  .install-body { padding: var(--space-4); }
+  .install-body pre { margin: 0 0 var(--space-3) 0; }
+  .install-body pre:last-child { margin-bottom: 0; }
+  .install-note {
     color: var(--text-2);
-    max-width: 70ch;
+    font-size: var(--text-sm);
+    margin: 0;
+    line-height: 1.55;
+  }
+
+  .submit-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: var(--space-4);
+    margin-top: var(--space-4);
+  }
+  .submit-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: var(--space-5);
+  }
+  .submit-eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin: 0 0 var(--space-2) 0;
+  }
+  .submit-title {
+    font-size: var(--text-lg);
+    font-weight: 700;
+    margin: 0 0 var(--space-3) 0;
+    color: var(--accent);
+  }
+  .submit-prose {
+    color: var(--text-2);
+    font-size: var(--text-sm);
+    line-height: 1.55;
+    margin: 0 0 var(--space-3) 0;
+  }
+  .submit-cta {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--accent);
+    margin-top: var(--space-2);
   }
 </style>
