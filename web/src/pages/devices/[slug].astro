@@ -1,0 +1,366 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import { groupCaptures, decisionSummary, driveSummary, formatDate } from '../../lib/devices';
+
+export async function getStaticPaths() {
+  const captures = await getCollection('captures');
+  const corpus = groupCaptures(captures);
+  return Array.from(corpus.values()).map(d => ({
+    params: { slug: d.slug },
+    props: { device: d },
+  }));
+}
+
+const { device } = Astro.props;
+const head = device.headlineDevice;
+const m = device.latest.data;
+
+const dec = decisionSummary(head);
+const drv = driveSummary(head);
+
+const decisions = head.decisions ? Object.entries(head.decisions) : [];
+const proto = head.protocol_info;
+const desc = head.descriptor;
+const ssdp = head.discovery.ssdp_usns ?? [];
+const mdnsSvcs = head.discovery.mdns_services ?? [];
+const driveRuns = head.drive_test?.runs ?? [];
+const drivePerformed = head.drive_test?.performed ?? false;
+
+// Notes for the headline capture (latest). Optional.
+const notesById = import.meta.glob<string>(
+  '../../../../evidence/*/captures/*/notes.md',
+  { eager: true, query: '?raw', import: 'default' },
+);
+const headlineCaptureKey = device.latest.id.replace(/\/manifest$/, '');
+const notesPath = Object.keys(notesById).find(k => k.includes(`/${headlineCaptureKey}/`));
+const notesRaw = notesPath ? notesById[notesPath] : null;
+
+// Format-support summary: collapse drive runs into per-MIME outcomes.
+const driveByMime = new Map<string, { mime: string; runs: typeof driveRuns; ok: number }>();
+for (const r of driveRuns) {
+  const cur = driveByMime.get(r.mime) ?? { mime: r.mime, runs: [], ok: 0 };
+  cur.runs.push(r);
+  if (r.result === 'playing') cur.ok += 1;
+  driveByMime.set(r.mime, cur);
+}
+
+// protocol_info format counts: filter to non-zero or null entries.
+const formatRows = proto
+  ? Object.entries(proto.format_matches).map(([k, v]) => ({ family: k, count: v }))
+  : [];
+
+// Source link helpers — files live in the GitLab repo at this path.
+const srcBase = `https://gitlab.com/dunn.dev/tutti/-/blob/main/evidence/${device.slug}/captures/${headlineCaptureKey.split('/').pop()}`;
+const linkTo = (relPath: string) => `${srcBase}/${relPath}`;
+
+function contributorUrl(c: string): string {
+  if (c.startsWith('github:')) return `https://github.com/${c.slice(7)}`;
+  if (c.startsWith('gitlab:')) return `https://gitlab.com/${c.slice(7)}`;
+  return '#';
+}
+---
+<Layout title={`${device.vendor ?? ''} ${device.model ?? device.slug}`.trim()} description={`State summary for ${device.model ?? device.slug}: library decisions, format support, on-the-wire evidence, drive transcripts.`}>
+  <header class="device-hero">
+    <p class="page-eyebrow">{device.vendor ?? '—'}</p>
+    <h1 class="page-title">{device.model ?? device.slug}</h1>
+    <p class="page-lede">
+      {head.descriptor?.parsed.x_dlna_doc && (
+        <span class="dlna">{head.descriptor.parsed.x_dlna_doc}</span>
+      )}
+      {head.descriptor?.parsed.model_description && (
+        <span> · {head.descriptor.parsed.model_description}</span>
+      )}
+      {head.udn && (
+        <span> · <code>{head.udn}</code></span>
+      )}
+    </p>
+
+    <div class="hero-pills">
+      <span class:list={['tag', dec.tone === 'mute' ? '' : dec.tone]}>discovery: {dec.label}</span>
+      <span class:list={['tag', drv.tone === 'mute' ? '' : drv.tone]}>drive: {drv.label}</span>
+      {head.tags?.map(t => <span class="tag">{t}</span>)}
+    </div>
+  </header>
+
+  <section class="tile-grid">
+    <div class="tile">
+      <p class="tile-label">Latest capture</p>
+      <p class="tile-value">{formatDate(m.captured_at)}</p>
+      <p class="tile-sub">
+        {m.contributor ? <a href={contributorUrl(m.contributor)} target="_blank" rel="noopener">{m.contributor}</a> : 'anonymous'}
+        {' · tutti '}{m.tutti_version}
+      </p>
+    </div>
+    <div class="tile">
+      <p class="tile-label">Capture count</p>
+      <p class="tile-value">{device.history.length}</p>
+      <p class="tile-sub">across the corpus</p>
+    </div>
+    <div class="tile">
+      <p class="tile-label">Decisions</p>
+      <p class="tile-value">{decisions.length}</p>
+      <p class="tile-sub">{decisions.filter(([, d]) => d.result === 'accepted').length} accepted · {decisions.filter(([, d]) => d.result === 'rejected').length} rejected</p>
+    </div>
+    {proto && (
+      <div class="tile">
+        <p class="tile-label">Audio sinks</p>
+        <p class="tile-value">{proto.audio_sink_count}</p>
+        <p class="tile-sub">of {proto.sink_count} total announced</p>
+      </div>
+    )}
+  </section>
+
+  {decisions.length > 0 && (
+    <section>
+      <h2 class="section-title">Library decisions</h2>
+      <table class="data">
+        <thead>
+          <tr>
+            <th>Library</th>
+            <th>Result</th>
+            <th>Reason</th>
+            <th>Method</th>
+          </tr>
+        </thead>
+        <tbody>
+          {decisions.map(([lib, d]) => (
+            <tr>
+              <td class="mono">{lib}</td>
+              <td><span class:list={['tag', d.result === 'accepted' ? 'ok' : d.result === 'rejected' ? 'fail' : 'warn']}>{d.result}</span></td>
+              <td>
+                <code>{d.reason_code}</code>
+                {d.reason_text && <p class="reason-text">{d.reason_text}</p>}
+              </td>
+              <td class="mono">{d.method}{d.confidence && ` · ${d.confidence}`}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+  )}
+
+  {drivePerformed && driveRuns.length > 0 && (
+    <section>
+      <h2 class="section-title">Drive runs</h2>
+      <p class="section-lede">tutti sent each tone via SetAVTransportURI + Play and polled the device for {head.drive_test?.runs?.length} scenarios. Source field shows which metadata surface (DIDL-Lite or embedded tags) the device echoed back.</p>
+      <table class="data">
+        <thead>
+          <tr>
+            <th>Scenario</th>
+            <th>MIME</th>
+            <th>Rate</th>
+            <th>Result</th>
+            <th>Source</th>
+            <th>Round-trip</th>
+            <th>Transcript</th>
+          </tr>
+        </thead>
+        <tbody>
+          {driveRuns.map(r => (
+            <tr>
+              <td class="mono">{r.scenario}</td>
+              <td class="mono">{r.mime}</td>
+              <td class="mono">{r.rate_hz ? `${(r.rate_hz / 1000).toFixed(1)} kHz` : '—'}{r.bits ? ` · ${r.bits}-bit` : ''}</td>
+              <td><span class:list={['tag', r.result === 'playing' ? 'ok' : r.result === 'errored' || r.result === 'rejected' ? 'fail' : 'warn']}>{r.result}</span></td>
+              <td class="mono">{r.metadata_source ?? '—'}</td>
+              <td class="mono">{r.metadata_round_trip ?? '—'}</td>
+              <td><a href={linkTo(r.transcript_file)} class="mono" target="_blank" rel="noopener">log →</a></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+  )}
+
+  <section>
+    <h2 class="section-title">Evidence</h2>
+    <p class="section-lede">Every detail tutti captured. Click each block to expand.</p>
+
+    <details>
+      <summary>SSDP — {ssdp.length} announced USN{ssdp.length === 1 ? '' : 's'}</summary>
+      <div class="details-body">
+        <p class="section-prose">The device responded to M-SEARCH with the following USNs (one entry per advertised role: root, device-type, services).</p>
+        <ul class="usn-list">
+          {ssdp.map(u => <li class="mono">{u}</li>)}
+        </ul>
+        <p class="section-prose"><a href={linkTo('ssdp.json')}>ssdp.json →</a> · <a href={linkTo('ssdp-raw.txt')}>ssdp-raw.txt →</a></p>
+      </div>
+    </details>
+
+    {mdnsSvcs.length > 0 && (
+      <details>
+        <summary>mDNS — {mdnsSvcs.length} resolved service{mdnsSvcs.length === 1 ? '' : 's'}</summary>
+        <div class="details-body">
+          <table class="data">
+            <thead><tr><th>Type</th><th>Instance</th><th>Host</th><th>Port</th></tr></thead>
+            <tbody>
+              {mdnsSvcs.map(s => (
+                <tr>
+                  <td class="mono">{s.service_type}</td>
+                  <td>{s.instance}</td>
+                  <td class="mono">{s.hostname ?? '—'}</td>
+                  <td class="mono">{s.port ?? '—'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p class="section-prose"><a href={linkTo('mdns.json')}>mdns.json →</a></p>
+        </div>
+      </details>
+    )}
+
+    {desc && (
+      <details>
+        <summary>Device descriptor — {desc.parsed.services.length} services advertised</summary>
+        <div class="details-body">
+          <dl class="kv">
+            <dt>deviceType</dt><dd class="mono">{desc.parsed.device_type}</dd>
+            <dt>friendlyName</dt><dd>{desc.parsed.friendly_name}</dd>
+            {desc.parsed.manufacturer && <><dt>manufacturer</dt><dd>{desc.parsed.manufacturer}</dd></>}
+            {desc.parsed.model_name && <><dt>modelName</dt><dd>{desc.parsed.model_name}</dd></>}
+            {desc.parsed.model_description && <><dt>modelDescription</dt><dd>{desc.parsed.model_description}</dd></>}
+            {desc.parsed.model_url && <><dt>modelURL</dt><dd class="mono"><a href={desc.parsed.model_url} target="_blank" rel="noopener">{desc.parsed.model_url}</a></dd></>}
+            <dt>UDN</dt><dd class="mono">{desc.parsed.udn}</dd>
+            {desc.parsed.x_dlna_doc && <><dt>X_DLNADOC</dt><dd class="mono">{desc.parsed.x_dlna_doc}</dd></>}
+          </dl>
+
+          <h3 class="sub-section-title">Services</h3>
+          <ul class="service-list">
+            {desc.parsed.services.map(s => (
+              <li>
+                <code>{s.service_type}</code>
+                <span class="service-id">{s.service_id}</span>
+              </li>
+            ))}
+          </ul>
+
+          <p class="section-prose"><a href={linkTo('descriptor.xml')}>descriptor.xml →</a> · <a href={linkTo('descriptor.json')}>descriptor.json →</a></p>
+        </div>
+      </details>
+    )}
+
+    {proto && (
+      <details>
+        <summary>GetProtocolInfo — {proto.audio_sink_count} audio sinks of {proto.sink_count} total</summary>
+        <div class="details-body">
+          <p class="section-prose">What the device announces it can play. Discrepancies between announced and actually-played formats are tutti's bread and butter.</p>
+          <table class="data">
+            <thead><tr><th>Format family</th><th>Sinks</th></tr></thead>
+            <tbody>
+              {formatRows.map(r => (
+                <tr>
+                  <td class="mono">{r.family}</td>
+                  <td class="mono">{r.count === null ? <span class="text-muted">— (not measured)</span> : r.count}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p class="section-prose"><a href={linkTo('protocol-info.txt')}>protocol-info.txt (full sink list) →</a></p>
+        </div>
+      </details>
+    )}
+  </section>
+
+  {device.history.length > 1 && (
+    <section>
+      <h2 class="section-title">Capture history</h2>
+      <table class="data">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Contributor</th>
+            <th>Capture id</th>
+            <th>tutti</th>
+          </tr>
+        </thead>
+        <tbody>
+          {device.history.map(h => (
+            <tr>
+              <td class="mono">{formatDate(h.data.captured_at)}</td>
+              <td>{h.data.contributor ?? 'anonymous'}</td>
+              <td class="mono">{h.data.capture_id}</td>
+              <td class="mono">{h.data.tutti_version}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+  )}
+
+  {notesRaw && (
+    <section>
+      <h2 class="section-title">Contributor notes</h2>
+      <pre class="notes">{notesRaw}</pre>
+    </section>
+  )}
+</Layout>
+
+<style>
+  .device-hero { margin-bottom: var(--space-6); }
+  .device-hero .page-lede { margin-bottom: var(--space-3); font-size: var(--text-md); }
+  .device-hero .page-lede code { font-size: 0.85em; }
+  .device-hero .dlna { font-family: var(--font-mono); }
+  .hero-pills { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-3); }
+
+  .section-title {
+    font-size: var(--text-xl);
+    font-weight: 700;
+    color: var(--text);
+    margin: var(--space-7) 0 var(--space-2) 0;
+    letter-spacing: -0.01em;
+  }
+  .sub-section-title {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin: var(--space-4) 0 var(--space-2) 0;
+  }
+  .section-lede {
+    color: var(--text-2);
+    font-size: var(--text-sm);
+    margin: 0 0 var(--space-3) 0;
+    max-width: 70ch;
+  }
+  .section-prose {
+    color: var(--text-2);
+    font-size: var(--text-sm);
+    margin: var(--space-3) 0 0 0;
+  }
+
+  .reason-text {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    margin: var(--space-1) 0 0 0;
+  }
+
+  .usn-list, .service-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .usn-list li, .service-list li {
+    padding: var(--space-1) 0;
+    border-bottom: 1px solid var(--border);
+    font-size: var(--text-sm);
+  }
+  .usn-list li:last-child, .service-list li:last-child { border-bottom: none; }
+  .service-id {
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    margin-left: var(--space-2);
+  }
+
+  pre.notes {
+    background: var(--bg);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    line-height: 1.55;
+    white-space: pre-wrap;
+  }
+
+  .text-muted { color: var(--text-muted); }
+</style>

@@ -1,0 +1,53 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+const { title, description } = Astro.props;
+const pageTitle = title === 'Home' ? 'tutti.dunn.dev' : `${title} — tutti.dunn.dev`;
+
+const nav = [
+  { href: '/', label: 'Devices' },
+  { href: '/contribute/', label: 'Contribute' },
+  { href: 'https://gitlab.com/dunn.dev/tutti', label: 'Source', external: true },
+];
+
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{pageTitle}</title>
+  {description && <meta name="description" content={description} />}
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header-inner">
+      <a href="/" class="brand"><span class="brand-name">tutti</span>.dunn.dev</a>
+      <nav class="site-nav" aria-label="Primary">
+        {nav.map(item => (
+          item.external
+            ? <a href={item.href} target="_blank" rel="noopener">{item.label}</a>
+            : <a href={item.href} class:list={{ active: item.href === path || item.href === path + '/' }}>{item.label}</a>
+        ))}
+      </nav>
+    </div>
+  </header>
+  <main class="page">
+    <slot />
+  </main>
+  <footer class="site-footer">
+    <div class="site-footer-inner">
+      <span>tutti corpus · MIT</span>
+      <span>gitlab.com/dunn.dev/tutti</span>
+    </div>
+  </footer>
+</body>
+</html>

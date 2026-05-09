@@ -1,0 +1,19 @@
+{
+  "name": "tutti-web",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Static corpus site for tutti. Reads ../evidence/ and renders per-device pages at tutti.dunn.dev.",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.4",
+    "astro": "^5.7.4",
+    "typescript": "^5.6.3"
+  }
+}

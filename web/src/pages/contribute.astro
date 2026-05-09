@@ -1,0 +1,98 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout title="Contribute" description="How to add a device capture to the tutti corpus.">
+  <header>
+    <p class="page-eyebrow">For contributors</p>
+    <h1 class="page-title">Add a device</h1>
+    <p class="page-lede">
+      tutti runs on your LAN, captures what it sees, and writes a paste-ready
+      bundle to disk. Submitting a capture is a single MR.
+    </p>
+  </header>
+
+  <section>
+    <h2 class="section-title">1. Run tutti against your LAN</h2>
+    <pre class="code-block">
+# Build from source (binaries land with v0.1.0).
+git clone https://gitlab.com/dunn.dev/tutti.git
+cd tutti
+make build
+
+# Capture the LAN. Drive runs are opt-in via --drive; tutti refuses
+# to interrupt a device that's currently in PLAYING state unless you
+# also pass --force.
+./tutti capture --drive --contributor github:your-handle</pre>
+    <p class="section-prose">
+      Output lands in <code>./capture-&lt;timestamp&gt;-&lt;host&gt;/</code>. Open
+      the directory and review what tutti wrote: SSDP/mDNS dumps, the
+      device descriptor, GetProtocolInfo sink list, and per-tone drive
+      transcripts. Edit <code>notes.md</code> if there's context worth adding
+      ("the device is slow to wake," "I had to disable IPv6," etc.).
+    </p>
+  </section>
+
+  <section>
+    <h2 class="section-title">2. Validate locally</h2>
+    <pre class="code-block">make validate DIR=./capture-&lt;timestamp&gt;-&lt;host&gt;</pre>
+    <p class="section-prose">
+      The same validator runs in CI. If it fails locally, the failure
+      message tells you the next action — schema-shape, vacuity rule,
+      or redaction-not-recorded. CI will reject the MR with the same
+      message.
+    </p>
+  </section>
+
+  <section>
+    <h2 class="section-title">3. Submit as a merge request</h2>
+    <p class="section-prose">
+      Move the capture into the corpus tree:
+    </p>
+    <pre class="code-block">mkdir -p evidence/&lt;vendor&gt;-&lt;model&gt;/captures/
+mv ./capture-&lt;ts&gt;-&lt;host&gt; evidence/&lt;vendor&gt;-&lt;model&gt;/captures/&lt;ts&gt;-&lt;contributor&gt;
+# Open an MR on https://gitlab.com/dunn.dev/tutti</pre>
+    <p class="section-prose">
+      The site rebuilds on merge. Your capture appears in the device
+      list and gets its own page within minutes.
+    </p>
+  </section>
+
+  <section>
+    <h2 class="section-title">What's preserved, what's redacted</h2>
+    <p class="section-prose">
+      tutti scrubs RFC1918 LAN addresses, Subsonic auth params (user,
+      token, salt), and Authorization headers from every transcript by
+      default. The manifest records every redaction it applied, so a
+      reader of the bundle always knows what was stripped.
+    </p>
+    <p class="section-prose">
+      The device's UDN is preserved on purpose: it's central to bug
+      evidence, advertised on every multicast, and not sensitive in
+      isolation.
+    </p>
+  </section>
+</Layout>
+
+<style>
+  .code-block {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: var(--space-3);
+    overflow-x: auto;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    line-height: 1.55;
+    margin: var(--space-3) 0;
+  }
+  .section-title {
+    font-size: var(--text-xl);
+    font-weight: 700;
+    margin: var(--space-7) 0 var(--space-3) 0;
+    letter-spacing: -0.01em;
+  }
+  .section-prose {
+    color: var(--text-2);
+    max-width: 70ch;
+  }
+</style>
