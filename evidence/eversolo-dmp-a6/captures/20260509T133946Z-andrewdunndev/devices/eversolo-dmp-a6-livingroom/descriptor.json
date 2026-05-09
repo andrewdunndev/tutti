@@ -1,0 +1,44 @@
+{
+  "device_type": "urn:schemas-upnp-org:device:MediaRenderer:1",
+  "friendly_name": "DMP-A6(livingroom)",
+  "manufacturer": "EVERSOLO",
+  "manufacturer_url": "http://www.eversolo.com",
+  "model_description": "Plutinosoft AV Media Renderer Device",
+  "model_name": "AV Renderer Device",
+  "model_url": "http://www.plutinosoft.com/platinum",
+  "udn": "uuid:800a805eef11-dmr",
+  "presentation_url": "http://\u003cDEVICE_IP\u003e:1374/",
+  "x_dlna_doc": "DMR-1.50",
+  "icons": [
+    {
+      "mime": "image/png",
+      "width": 64,
+      "height": 64,
+      "depth": 16,
+      "url": "http://\u003cDEVICE_IP\u003e:1374/images/icon-64x64.png"
+    }
+  ],
+  "services": [
+    {
+      "service_type": "urn:schemas-upnp-org:service:AVTransport:1",
+      "service_id": "urn:upnp-org:serviceId:AVTransport",
+      "scpd_url": "http://\u003cDEVICE_IP\u003e:1374/AVTransport/800a805eef11-dmr/scpd.xml",
+      "control_url": "http://\u003cDEVICE_IP\u003e:1374/AVTransport/800a805eef11-dmr/control.xml",
+      "event_sub_url": "http://\u003cDEVICE_IP\u003e:1374/AVTransport/800a805eef11-dmr/event.xml"
+    },
+    {
+      "service_type": "urn:schemas-upnp-org:service:ConnectionManager:1",
+      "service_id": "urn:upnp-org:serviceId:ConnectionManager",
+      "scpd_url": "http://\u003cDEVICE_IP\u003e:1374/ConnectionManager/800a805eef11-dmr/scpd.xml",
+      "control_url": "http://\u003cDEVICE_IP\u003e:1374/ConnectionManager/800a805eef11-dmr/control.xml",
+      "event_sub_url": "http://\u003cDEVICE_IP\u003e:1374/ConnectionManager/800a805eef11-dmr/event.xml"
+    },
+    {
+      "service_type": "urn:schemas-upnp-org:service:RenderingControl:1",
+      "service_id": "urn:upnp-org:serviceId:RenderingControl",
+      "scpd_url": "http://\u003cDEVICE_IP\u003e:1374/RenderingControl/800a805eef11-dmr/scpd.xml",
+      "control_url": "http://\u003cDEVICE_IP\u003e:1374/RenderingControl/800a805eef11-dmr/control.xml",
+      "event_sub_url": "http://\u003cDEVICE_IP\u003e:1374/RenderingControl/800a805eef11-dmr/event.xml"
+    }
+  ]
+}

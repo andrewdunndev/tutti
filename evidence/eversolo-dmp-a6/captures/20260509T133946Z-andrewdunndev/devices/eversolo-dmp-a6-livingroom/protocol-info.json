@@ -1,0 +1,16 @@
+{
+  "sink_count": 392,
+  "audio_sink_count": 107,
+  "format_matches": {
+    "aac": 19,
+    "alac": 1,
+    "dsd": 0,
+    "flac": 1,
+    "mp3": 7,
+    "mqa": null,
+    "opus": 0,
+    "vorbis": 2,
+    "wav": 3
+  },
+  "raw_file": "devices/eversolo-dmp-a6-livingroom/protocol-info.txt"
+}

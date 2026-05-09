@@ -1,0 +1,16 @@
+{
+  "go-upnpcast@reimpl-of-v0.1.0": {
+    "result": "accepted",
+    "reason_code": "mediarenderer_v1_avtransport_found",
+    "reason_text": "deviceType matched MediaRenderer:1; AVTransport service present with controlURL",
+    "method": "reimplementation",
+    "confidence": "medium"
+  },
+  "huin/goupnp@reimpl-of-v1.3.0": {
+    "result": "accepted",
+    "reason_code": "any_device_with_avtransport_service",
+    "reason_text": "AVTransport:1 service found somewhere in the device tree; goupnp would expose an AVTransport client",
+    "method": "reimplementation",
+    "confidence": "medium"
+  }
+}

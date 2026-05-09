@@ -1,0 +1,83 @@
+[avt] scenario: aac-256
+[avt] mime:     audio/mp4
+[avt] control:  http://<DEVICE_IP>:1374/AVTransport/800a805eef11-dmr/control.xml
+[avt] tone:     http://<CLIENT_IP>:49182/tones/AAC_256.m4a
+[avt] started:  2026-05-09T13:41:20Z
+
+--- step 1: GetTransportInfo -> HTTP 200 ---
+  CurrentSpeed: 1
+  CurrentTransportState: PLAYING
+  CurrentTransportStatus: OK
+
+--- step 2: SetAVTransportURI -> HTTP 200 ---
+  (no fields in response, raw 277 bytes)
+
+--- step 3: Play -> HTTP 200 ---
+  (no fields in response, raw 264 bytes)
+
+--- poll 1 transport: GetTransportInfo -> HTTP 200 ---
+  CurrentSpeed: 1
+  CurrentTransportState: TRANSITIONING
+  CurrentTransportStatus: OK
+
+--- poll 1 position: GetPositionInfo -> HTTP 200 ---
+  AbsCount: 0
+  AbsTime: 0:00:05
+  RelCount: 0
+  RelTime: 0:00:05
+  Track: 1
+  TrackDuration: 0:00:05
+  TrackMetaData: <DIDL-Lite xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/"><item id="tutti-probe-1" parentID="0" r ...[truncated]
+  TrackURI: http://<CLIENT_IP>:49182/tones/AAC_256.m4a
+
+--- poll 2 transport: GetTransportInfo -> HTTP 200 ---
+  CurrentSpeed: 1
+  CurrentTransportState: PLAYING
+  CurrentTransportStatus: OK
+
+--- poll 2 position: GetPositionInfo -> HTTP 200 ---
+  AbsCount: 0
+  AbsTime: 0:00:00
+  RelCount: 0
+  RelTime: 0:00:00
+  Track: 1
+  TrackDuration: 0:00:05
+  TrackMetaData: <DIDL-Lite xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/"><item id="tutti-probe-1" parentID="0" r ...[truncated]
+  TrackURI: http://<CLIENT_IP>:49182/tones/AAC_256.m4a
+
+--- poll 3 transport: GetTransportInfo -> HTTP 200 ---
+  CurrentSpeed: 1
+  CurrentTransportState: PLAYING
+  CurrentTransportStatus: OK
+
+--- poll 3 position: GetPositionInfo -> HTTP 200 ---
+  AbsCount: 0
+  AbsTime: 0:00:00
+  RelCount: 0
+  RelTime: 0:00:00
+  Track: 1
+  TrackDuration: 0:00:05
+  TrackMetaData: <DIDL-Lite xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/"><item id="tutti-probe-1" parentID="0" r ...[truncated]
+  TrackURI: http://<CLIENT_IP>:49182/tones/AAC_256.m4a
+
+--- poll 4 transport: GetTransportInfo -> HTTP 200 ---
+  CurrentSpeed: 1
+  CurrentTransportState: PLAYING
+  CurrentTransportStatus: OK
+
+--- poll 4 position: GetPositionInfo -> HTTP 200 ---
+  AbsCount: 0
+  AbsTime: 0:00:00
+  RelCount: 0
+  RelTime: 0:00:00
+  Track: 1
+  TrackDuration: 0:00:05
+  TrackMetaData: <DIDL-Lite xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/"><item id="tutti-probe-1" parentID="0" r ...[truncated]
+  TrackURI: http://<CLIENT_IP>:49182/tones/AAC_256.m4a
+
+[avt] elapsed: 12.17s
+[avt] result:  playing
+[avt] final:   PLAYING
+[avt] transitions: PLAYING -> TRANSITIONING -> PLAYING
+[avt] metadata_source: didl-lite
+[avt] metadata_round_trip: matched

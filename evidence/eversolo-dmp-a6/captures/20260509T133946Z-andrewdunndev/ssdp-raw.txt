@@ -1,0 +1,70 @@
+[ssdp] M-SEARCH -> 239.255.255.250:1900, MX=3
+[ssdp]   sent ST: ssdp:all
+[ssdp]   sent ST: upnp:rootdevice
+[ssdp]   sent ST: urn:schemas-upnp-org:device:MediaRenderer:1
+[ssdp]   sent ST: urn:schemas-upnp-org:service:AVTransport:1
+
+[ssdp] 9 raw response(s), 6 unique USN(s), 1 unique LOCATION(s)
+
+==============================================================================
+LOCATIONS (feed each into descriptor_fetch)
+==============================================================================
+  http://<DEVICE_IP>:1374/description.xml
+
+==============================================================================
+DEVICES (grouped by USN)
+==============================================================================
+
+--- uuid:800a805eef11-dmr ---
+  FROM:     <DEVICE_IP>:45185
+  ST:       uuid:800a805eef11-dmr
+  LOCATION: http://<DEVICE_IP>:1374/description.xml
+  SERVER:   UPnP/1.0 DLNADOC/1.50 Platinum/1.0.5.13
+  BOOTID.UPNP.ORG: 1778288040
+  CONFIGID.UPNP.ORG: 4225269
+
+
+--- uuid:800a805eef11-dmr::upnp:rootdevice ---
+  FROM:     <DEVICE_IP>:45185
+  ST:       upnp:rootdevice
+  LOCATION: http://<DEVICE_IP>:1374/description.xml
+  SERVER:   UPnP/1.0 DLNADOC/1.50 Platinum/1.0.5.13
+  BOOTID.UPNP.ORG: 1778288040
+  CONFIGID.UPNP.ORG: 4225269
+
+
+--- uuid:800a805eef11-dmr::urn:schemas-upnp-org:device:MediaRenderer:1 ---
+  FROM:     <DEVICE_IP>:45185
+  ST:       urn:schemas-upnp-org:device:MediaRenderer:1
+  LOCATION: http://<DEVICE_IP>:1374/description.xml
+  SERVER:   UPnP/1.0 DLNADOC/1.50 Platinum/1.0.5.13
+  BOOTID.UPNP.ORG: 1778288040
+  CONFIGID.UPNP.ORG: 4225269
+
+
+--- uuid:800a805eef11-dmr::urn:schemas-upnp-org:service:AVTransport:1 ---
+  FROM:     <DEVICE_IP>:45185
+  ST:       urn:schemas-upnp-org:service:AVTransport:1
+  LOCATION: http://<DEVICE_IP>:1374/description.xml
+  SERVER:   UPnP/1.0 DLNADOC/1.50 Platinum/1.0.5.13
+  BOOTID.UPNP.ORG: 1778288040
+  CONFIGID.UPNP.ORG: 4225269
+
+
+--- uuid:800a805eef11-dmr::urn:schemas-upnp-org:service:ConnectionManager:1 ---
+  FROM:     <DEVICE_IP>:45185
+  ST:       urn:schemas-upnp-org:service:ConnectionManager:1
+  LOCATION: http://<DEVICE_IP>:1374/description.xml
+  SERVER:   UPnP/1.0 DLNADOC/1.50 Platinum/1.0.5.13
+  BOOTID.UPNP.ORG: 1778288040
+  CONFIGID.UPNP.ORG: 4225269
+
+
+--- uuid:800a805eef11-dmr::urn:schemas-upnp-org:service:RenderingControl:1 ---
+  FROM:     <DEVICE_IP>:45185
+  ST:       urn:schemas-upnp-org:service:RenderingControl:1
+  LOCATION: http://<DEVICE_IP>:1374/description.xml
+  SERVER:   UPnP/1.0 DLNADOC/1.50 Platinum/1.0.5.13
+  BOOTID.UPNP.ORG: 1778288040
+  CONFIGID.UPNP.ORG: 4225269
+

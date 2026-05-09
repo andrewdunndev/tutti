@@ -1,0 +1,155 @@
+[
+  {
+    "service_type": "_airplay._tcp",
+    "instance": "mbp._airplay._tcp.local",
+    "hostname": "mbp.local",
+    "port": 7000,
+    "addrs": [
+      "\u003cCLIENT_IP\u003e",
+      "fe80::1ce1:1d01:13cc:bd4b",
+      "fd30:551b:af42:48cb:c44:86d0:101f:2024"
+    ],
+    "txt": {
+      "acl": "0",
+      "act": "2",
+      "at": "4",
+      "deviceid": "72:09:BF:AD:F6:8F",
+      "features": "0x4A7FCFD5,0x38174FDE",
+      "fex": "1c9/St5PFzg2IYxA",
+      "flags": "0x204",
+      "gcgl": "0",
+      "gid": "1BF94191-4CD8-4253-86E8-C73A0D475A28",
+      "igl": "0",
+      "model": "Mac16,1",
+      "pi": "33eaa888-4e76-45ab-a2ef-47bdf63d6dae",
+      "pk": "63c2b528b0aafc7ea0f70da263cc97bda8a7c8f9d18409cb2ae9052da538f2a1",
+      "protovers": "1.1",
+      "psi": "7109BFAD-F68F-4F1F-89C6-51EEB1A67354",
+      "rsf": "0x8",
+      "srcvers": "940.23.1"
+    }
+  },
+  {
+    "service_type": "_airplay._tcp",
+    "instance": "andunn--20250620-5DT6C._airplay._tcp.local",
+    "hostname": "andunn--20250620-5DT6C.local",
+    "port": 7000,
+    "addrs": [
+      "\u003cRFC1918_IP\u003e",
+      "fe80::4d9:21d9:89d8:4e90",
+      "fd30:551b:af42:48cb:c8f:2843:13c5:4d32"
+    ],
+    "txt": {
+      "acl": "0",
+      "act": "2",
+      "at": "4",
+      "deviceid": "CE:E1:BC:56:C3:DA",
+      "features": "0x4A7FCFD5,0x38174FDE",
+      "fex": "1c9/St5PFzg2IYxA",
+      "flags": "0x204",
+      "gcgl": "0",
+      "gid": "CCBF073D-EA8C-41A7-8DA5-19B66881E245",
+      "igl": "0",
+      "model": "Mac16,5",
+      "pi": "a03abb24-eb46-4345-a089-88a352f7382a",
+      "pk": "d34062ec721c2d25a842df33542917a6cca6ba04c2d5d29deceadc05eadc11b0",
+      "protovers": "1.1",
+      "psi": "CFE1BC56-C3DA-4124-AF34-113E60928AAB",
+      "rsf": "0x8",
+      "srcvers": "940.23.1"
+    }
+  },
+  {
+    "service_type": "_raop._tcp",
+    "instance": "7209BFADF68F\\@mbp._raop._tcp.local",
+    "hostname": "mbp.local",
+    "port": 7000,
+    "addrs": [
+      "\u003cCLIENT_IP\u003e",
+      "fe80::1ce1:1d01:13cc:bd4b",
+      "fd30:551b:af42:48cb:c44:86d0:101f:2024"
+    ],
+    "txt": {
+      "am": "Mac16,1",
+      "cn": "0,1,2,3",
+      "da": "true",
+      "et": "0,3,5",
+      "ft": "0x4A7FCFD5,0x38174FDE",
+      "md": "0,1,2",
+      "pk": "63c2b528b0aafc7ea0f70da263cc97bda8a7c8f9d18409cb2ae9052da538f2a1",
+      "sf": "0x204",
+      "tp": "UDP",
+      "vn": "65537",
+      "vs": "940.23.1",
+      "vv": "0"
+    }
+  },
+  {
+    "service_type": "_raop._tcp",
+    "instance": "800a805eef11\\@DMP-A6\\(livingroom\\)._raop._tcp.local",
+    "hostname": "Android.local",
+    "port": 5500,
+    "addrs": [
+      "\u003cDEVICE_IP\u003e",
+      "fe80::e659:1a2c:7bbb:7c3e"
+    ],
+    "txt": {
+      "am": "eversolo,1",
+      "ch": "2",
+      "cn": "1",
+      "da": "true",
+      "ek": "1",
+      "et": "0,1",
+      "fv": "1.0",
+      "md": "0,1,2",
+      "pw": "false",
+      "sf": "0x4",
+      "sr": "44100",
+      "ss": "16",
+      "sv": "false",
+      "tp": "UDP",
+      "txtvers": "1",
+      "vn": "65537",
+      "vs": "105.1"
+    }
+  },
+  {
+    "service_type": "_raop._tcp",
+    "instance": "CEE1BC56C3DA\\@andunn--20250620-5DT6C._raop._tcp.local",
+    "hostname": "andunn--20250620-5DT6C.local",
+    "port": 7000,
+    "addrs": [
+      "\u003cRFC1918_IP\u003e",
+      "fe80::4d9:21d9:89d8:4e90",
+      "fd30:551b:af42:48cb:c8f:2843:13c5:4d32"
+    ],
+    "txt": {
+      "am": "Mac16,5",
+      "cn": "0,1,2,3",
+      "da": "true",
+      "et": "0,3,5",
+      "ft": "0x4A7FCFD5,0x38174FDE",
+      "md": "0,1,2",
+      "pk": "d34062ec721c2d25a842df33542917a6cca6ba04c2d5d29deceadc05eadc11b0",
+      "sf": "0x204",
+      "tp": "UDP",
+      "vn": "65537",
+      "vs": "940.23.1",
+      "vv": "0"
+    }
+  },
+  {
+    "service_type": "_spotify-connect._tcp",
+    "instance": "80:0a:80:5e:ef:11-0._spotify-connect._tcp.local",
+    "hostname": "80:0a:80:5e:ef:11-0.local",
+    "port": 9590,
+    "addrs": [
+      "\u003cDEVICE_IP\u003e"
+    ],
+    "txt": {
+      "CPath": "/zc/0",
+      "Stack": "SP",
+      "VERSION": "1.0"
+    }
+  }
+]

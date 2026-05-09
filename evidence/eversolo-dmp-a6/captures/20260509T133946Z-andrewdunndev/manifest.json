@@ -1,0 +1,409 @@
+{
+  "schema_version": 1,
+  "tutti_version": "0.1.0-dev",
+  "capture_id": "01KR6FEBM57466RTQGTZZ5M3Z4",
+  "captured_at": "2026-05-09T13:39:46Z",
+  "contributor": "github:andrewdunndev",
+  "host": {
+    "os": "darwin",
+    "arch": "arm64",
+    "interfaces": [
+      "en0"
+    ]
+  },
+  "scaninfo": {
+    "ssdp_st_list": [
+      "ssdp:all",
+      "upnp:rootdevice",
+      "urn:schemas-upnp-org:device:MediaRenderer:1",
+      "urn:schemas-upnp-org:service:AVTransport:1"
+    ],
+    "ssdp_mx": 3,
+    "mdns_service_types": [
+      "_airplay._tcp",
+      "_googlecast._tcp",
+      "_raop._tcp",
+      "_spotify-connect._tcp",
+      "_sonos._tcp",
+      "_daap._tcp",
+      "_dacp._tcp"
+    ],
+    "drive_requested": true,
+    "drive_force": true
+  },
+  "runstats": {
+    "elapsed_seconds": 106.2155,
+    "ssdp_responses": 9,
+    "ssdp_unique_usns": 6,
+    "mdns_records": 6,
+    "exit": "success"
+  },
+  "redactions": [
+    "client-ip",
+    "device-ip"
+  ],
+  "devices": [
+    {
+      "slug": "eversolo-dmp-a6-livingroom",
+      "vendor": "EVERSOLO",
+      "model": "DMP-A6(livingroom)",
+      "udn": "uuid:800a805eef11-dmr",
+      "tags": [
+        "ssdp",
+        "drive-attempted",
+        "drive-ok"
+      ],
+      "discovery": {
+        "ssdp_usns": [
+          "uuid:800a805eef11-dmr",
+          "uuid:800a805eef11-dmr::upnp:rootdevice",
+          "uuid:800a805eef11-dmr::urn:schemas-upnp-org:device:MediaRenderer:1",
+          "uuid:800a805eef11-dmr::urn:schemas-upnp-org:service:AVTransport:1",
+          "uuid:800a805eef11-dmr::urn:schemas-upnp-org:service:ConnectionManager:1",
+          "uuid:800a805eef11-dmr::urn:schemas-upnp-org:service:RenderingControl:1"
+        ]
+      },
+      "descriptor": {
+        "url_redacted": "http://\u003cDEVICE_IP\u003e:1374/description.xml",
+        "raw_file": "devices/eversolo-dmp-a6-livingroom/descriptor.xml",
+        "parsed": {
+          "device_type": "urn:schemas-upnp-org:device:MediaRenderer:1",
+          "friendly_name": "DMP-A6(livingroom)",
+          "manufacturer": "EVERSOLO",
+          "manufacturer_url": "http://www.eversolo.com",
+          "model_description": "Plutinosoft AV Media Renderer Device",
+          "model_name": "AV Renderer Device",
+          "model_url": "http://www.plutinosoft.com/platinum",
+          "udn": "uuid:800a805eef11-dmr",
+          "presentation_url": "http://\u003cDEVICE_IP\u003e:1374/",
+          "x_dlna_doc": "DMR-1.50",
+          "icons": [
+            {
+              "mime": "image/png",
+              "width": 64,
+              "height": 64,
+              "depth": 16,
+              "url": "http://\u003cDEVICE_IP\u003e:1374/images/icon-64x64.png"
+            }
+          ],
+          "services": [
+            {
+              "service_type": "urn:schemas-upnp-org:service:AVTransport:1",
+              "service_id": "urn:upnp-org:serviceId:AVTransport",
+              "scpd_url": "http://\u003cDEVICE_IP\u003e:1374/AVTransport/800a805eef11-dmr/scpd.xml",
+              "control_url": "http://\u003cDEVICE_IP\u003e:1374/AVTransport/800a805eef11-dmr/control.xml",
+              "event_sub_url": "http://\u003cDEVICE_IP\u003e:1374/AVTransport/800a805eef11-dmr/event.xml"
+            },
+            {
+              "service_type": "urn:schemas-upnp-org:service:ConnectionManager:1",
+              "service_id": "urn:upnp-org:serviceId:ConnectionManager",
+              "scpd_url": "http://\u003cDEVICE_IP\u003e:1374/ConnectionManager/800a805eef11-dmr/scpd.xml",
+              "control_url": "http://\u003cDEVICE_IP\u003e:1374/ConnectionManager/800a805eef11-dmr/control.xml",
+              "event_sub_url": "http://\u003cDEVICE_IP\u003e:1374/ConnectionManager/800a805eef11-dmr/event.xml"
+            },
+            {
+              "service_type": "urn:schemas-upnp-org:service:RenderingControl:1",
+              "service_id": "urn:upnp-org:serviceId:RenderingControl",
+              "scpd_url": "http://\u003cDEVICE_IP\u003e:1374/RenderingControl/800a805eef11-dmr/scpd.xml",
+              "control_url": "http://\u003cDEVICE_IP\u003e:1374/RenderingControl/800a805eef11-dmr/control.xml",
+              "event_sub_url": "http://\u003cDEVICE_IP\u003e:1374/RenderingControl/800a805eef11-dmr/event.xml"
+            }
+          ]
+        }
+      },
+      "decisions": {
+        "go-upnpcast@reimpl-of-v0.1.0": {
+          "result": "accepted",
+          "reason_code": "mediarenderer_v1_avtransport_found",
+          "reason_text": "deviceType matched MediaRenderer:1; AVTransport service present with controlURL",
+          "method": "reimplementation",
+          "confidence": "medium"
+        },
+        "huin/goupnp@reimpl-of-v1.3.0": {
+          "result": "accepted",
+          "reason_code": "any_device_with_avtransport_service",
+          "reason_text": "AVTransport:1 service found somewhere in the device tree; goupnp would expose an AVTransport client",
+          "method": "reimplementation",
+          "confidence": "medium"
+        }
+      },
+      "protocol_info": {
+        "sink_count": 392,
+        "audio_sink_count": 107,
+        "format_matches": {
+          "aac": 19,
+          "alac": 1,
+          "dsd": 0,
+          "flac": 1,
+          "mp3": 7,
+          "mqa": null,
+          "opus": 0,
+          "vorbis": 2,
+          "wav": 3
+        },
+        "raw_file": "devices/eversolo-dmp-a6-livingroom/protocol-info.txt"
+      },
+      "drive_test": {
+        "performed": true,
+        "runs": [
+          {
+            "scenario": "flac-96k-24",
+            "mime": "audio/flac",
+            "rate_hz": 96000,
+            "bits": 24,
+            "channels": 1,
+            "metadata_didl_lite_sent": {
+              "title": "tutti probe: flac-96k-24",
+              "artist": "tutti.dunn.dev",
+              "album": "Audio Renderer Probes (embedded)"
+            },
+            "metadata_embedded": {
+              "title": "tutti embed: FLAC 96k 24",
+              "artist": "tutti.dunn.dev",
+              "album": "Audio Renderer Probes (embedded)"
+            },
+            "metadata_echoed": {
+              "title": "tutti probe: flac-96k-24",
+              "artist": "tutti.dunn.dev",
+              "album": "Audio Renderer Probes (embedded)"
+            },
+            "metadata_source": "didl-lite",
+            "metadata_round_trip": "matched",
+            "result": "playing",
+            "transitions": [
+              "PLAYING",
+              "TRANSITIONING",
+              "PLAYING"
+            ],
+            "transcript_file": "devices/eversolo-dmp-a6-livingroom/drive/01-flac-96k-24.log",
+            "elapsed_seconds": 12.112666417
+          },
+          {
+            "scenario": "flac-44k-16",
+            "mime": "audio/flac",
+            "rate_hz": 44100,
+            "bits": 16,
+            "channels": 1,
+            "metadata_didl_lite_sent": {
+              "title": "tutti probe: flac-44k-16",
+              "artist": "tutti.dunn.dev",
+              "album": "Audio Renderer Probes (embedded)"
+            },
+            "metadata_embedded": {
+              "title": "tutti embed: FLAC 44k 16",
+              "artist": "tutti.dunn.dev",
+              "album": "Audio Renderer Probes (embedded)"
+            },
+            "metadata_echoed": {
+              "title": "tutti probe: flac-44k-16",
+              "artist": "tutti.dunn.dev",
+              "album": "Audio Renderer Probes (embedded)"
+            },
+            "metadata_source": "didl-lite",
+            "metadata_round_trip": "matched",
+            "result": "playing",
+            "transitions": [
+              "PLAYING",
+              "TRANSITIONING",
+              "PLAYING"
+            ],
+            "transcript_file": "devices/eversolo-dmp-a6-livingroom/drive/02-flac-44k-16.log",
+            "elapsed_seconds": 12.083209791
+          },
+          {
+            "scenario": "wav-pcm-192k-24",
+            "mime": "audio/wav",
+            "rate_hz": 192000,
+            "bits": 24,
+            "channels": 1,
+            "metadata_didl_lite_sent": {
+              "title": "tutti probe: wav-pcm-192k-24",
+              "artist": "tutti.dunn.dev",
+              "album": "Audio Renderer Probes (embedded)"
+            },
+            "metadata_embedded": {
+              "title": "tutti embed: WAV PCM 192k 24",
+              "artist": "tutti.dunn.dev",
+              "album": "Audio Renderer Probes (embedded)"
+            },
+            "metadata_echoed": {
+              "title": "tutti probe: wav-pcm-192k-24",
+              "artist": "tutti.dunn.dev",
+              "album": "Audio Renderer Probes (embedded)"
+            },
+            "metadata_source": "didl-lite",
+            "metadata_round_trip": "matched",
+            "result": "playing",
+            "transitions": [
+              "PLAYING",
+              "TRANSITIONING",
+              "PLAYING"
+            ],
+            "transcript_file": "devices/eversolo-dmp-a6-livingroom/drive/03-wav-pcm-192k-24.log",
+            "elapsed_seconds": 12.165680084
+          },
+          {
+            "scenario": "wav-pcm-96k-24",
+            "mime": "audio/wav",
+            "rate_hz": 96000,
+            "bits": 24,
+            "channels": 1,
+            "metadata_didl_lite_sent": {
+              "title": "tutti probe: wav-pcm-96k-24",
+              "artist": "tutti.dunn.dev",
+              "album": "Audio Renderer Probes (embedded)"
+            },
+            "metadata_embedded": {
+              "title": "tutti embed: WAV PCM 96k 24",
+              "artist": "tutti.dunn.dev",
+              "album": "Audio Renderer Probes (embedded)"
+            },
+            "metadata_echoed": {
+              "title": "tutti probe: wav-pcm-96k-24",
+              "artist": "tutti.dunn.dev",
+              "album": "Audio Renderer Probes (embedded)"
+            },
+            "metadata_source": "didl-lite",
+            "metadata_round_trip": "matched",
+            "result": "playing",
+            "transitions": [
+              "PLAYING",
+              "TRANSITIONING",
+              "PLAYING"
+            ],
+            "transcript_file": "devices/eversolo-dmp-a6-livingroom/drive/04-wav-pcm-96k-24.log",
+            "elapsed_seconds": 12.177933542
+          },
+          {
+            "scenario": "wav-pcm-48k-16",
+            "mime": "audio/wav",
+            "rate_hz": 48000,
+            "bits": 16,
+            "channels": 1,
+            "metadata_didl_lite_sent": {
+              "title": "tutti probe: wav-pcm-48k-16",
+              "artist": "tutti.dunn.dev",
+              "album": "Audio Renderer Probes (embedded)"
+            },
+            "metadata_embedded": {
+              "title": "tutti embed: WAV PCM 48k 16",
+              "artist": "tutti.dunn.dev",
+              "album": "Audio Renderer Probes (embedded)"
+            },
+            "metadata_echoed": {
+              "title": "tutti probe: wav-pcm-48k-16",
+              "artist": "tutti.dunn.dev",
+              "album": "Audio Renderer Probes (embedded)"
+            },
+            "metadata_source": "didl-lite",
+            "metadata_round_trip": "matched",
+            "result": "playing",
+            "transitions": [
+              "PLAYING",
+              "TRANSITIONING",
+              "PLAYING"
+            ],
+            "transcript_file": "devices/eversolo-dmp-a6-livingroom/drive/05-wav-pcm-48k-16.log",
+            "elapsed_seconds": 12.206285541
+          },
+          {
+            "scenario": "wav-pcm-44k-16",
+            "mime": "audio/wav",
+            "rate_hz": 44100,
+            "bits": 16,
+            "channels": 1,
+            "metadata_didl_lite_sent": {
+              "title": "tutti probe: wav-pcm-44k-16",
+              "artist": "tutti.dunn.dev",
+              "album": "Audio Renderer Probes (embedded)"
+            },
+            "metadata_embedded": {
+              "title": "tutti embed: WAV PCM 44k 16",
+              "artist": "tutti.dunn.dev",
+              "album": "Audio Renderer Probes (embedded)"
+            },
+            "metadata_echoed": {
+              "title": "tutti probe: wav-pcm-44k-16",
+              "artist": "tutti.dunn.dev",
+              "album": "Audio Renderer Probes (embedded)"
+            },
+            "metadata_source": "didl-lite",
+            "metadata_round_trip": "matched",
+            "result": "playing",
+            "transitions": [
+              "PLAYING",
+              "TRANSITIONING",
+              "PLAYING"
+            ],
+            "transcript_file": "devices/eversolo-dmp-a6-livingroom/drive/06-wav-pcm-44k-16.log",
+            "elapsed_seconds": 12.181318208
+          },
+          {
+            "scenario": "mp3-320",
+            "mime": "audio/mpeg",
+            "rate_hz": 44100,
+            "bits": 16,
+            "channels": 1,
+            "metadata_didl_lite_sent": {
+              "title": "tutti probe: mp3-320",
+              "artist": "tutti.dunn.dev",
+              "album": "Audio Renderer Probes (embedded)"
+            },
+            "metadata_embedded": {
+              "title": "tutti embed: MP3 320",
+              "artist": "tutti.dunn.dev",
+              "album": "Audio Renderer Probes (embedded)"
+            },
+            "metadata_echoed": {
+              "title": "tutti probe: mp3-320",
+              "artist": "tutti.dunn.dev",
+              "album": "Audio Renderer Probes (embedded)"
+            },
+            "metadata_source": "didl-lite",
+            "metadata_round_trip": "matched",
+            "result": "playing",
+            "transitions": [
+              "PLAYING",
+              "TRANSITIONING",
+              "PLAYING"
+            ],
+            "transcript_file": "devices/eversolo-dmp-a6-livingroom/drive/07-mp3-320.log",
+            "elapsed_seconds": 12.075881042
+          },
+          {
+            "scenario": "aac-256",
+            "mime": "audio/mp4",
+            "rate_hz": 44100,
+            "bits": 16,
+            "channels": 1,
+            "metadata_didl_lite_sent": {
+              "title": "tutti probe: aac-256",
+              "artist": "tutti.dunn.dev",
+              "album": "Audio Renderer Probes (embedded)"
+            },
+            "metadata_embedded": {
+              "title": "tutti embed: AAC 256",
+              "artist": "tutti.dunn.dev",
+              "album": "Audio Renderer Probes (embedded)"
+            },
+            "metadata_echoed": {
+              "title": "tutti probe: aac-256",
+              "artist": "tutti.dunn.dev",
+              "album": "Audio Renderer Probes (embedded)"
+            },
+            "metadata_source": "didl-lite",
+            "metadata_round_trip": "matched",
+            "result": "playing",
+            "transitions": [
+              "PLAYING",
+              "TRANSITIONING",
+              "PLAYING"
+            ],
+            "transcript_file": "devices/eversolo-dmp-a6-livingroom/drive/08-aac-256.log",
+            "elapsed_seconds": 12.170291292
+          }
+        ]
+      }
+    }
+  ]
+}

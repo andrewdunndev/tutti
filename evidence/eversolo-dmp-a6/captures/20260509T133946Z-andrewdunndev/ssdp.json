@@ -1,0 +1,191 @@
+[
+  {
+    "USN": "uuid:800a805eef11-dmr::upnp:rootdevice",
+    "ST": "upnp:rootdevice",
+    "Location": "http://\u003cDEVICE_IP\u003e:1374/description.xml",
+    "Server": "UPnP/1.0 DLNADOC/1.50 Platinum/1.0.5.13",
+    "BootID": "1778288040",
+    "ConfigID": "4225269",
+    "CacheControl": "max-age=1800",
+    "Source": "\u003cDEVICE_IP\u003e:45185",
+    "Headers": {
+      "BOOTID.UPNP.ORG": "1778288040",
+      "CACHE-CONTROL": "max-age=1800",
+      "CONFIGID.UPNP.ORG": "4225269",
+      "DATE": "Sat, 09 May 2026 13:39:46 GMT",
+      "EXT": "",
+      "LOCATION": "http://\u003cDEVICE_IP\u003e:1374/description.xml",
+      "SERVER": "UPnP/1.0 DLNADOC/1.50 Platinum/1.0.5.13",
+      "ST": "upnp:rootdevice",
+      "USN": "uuid:800a805eef11-dmr::upnp:rootdevice"
+    }
+  },
+  {
+    "USN": "uuid:800a805eef11-dmr",
+    "ST": "uuid:800a805eef11-dmr",
+    "Location": "http://\u003cDEVICE_IP\u003e:1374/description.xml",
+    "Server": "UPnP/1.0 DLNADOC/1.50 Platinum/1.0.5.13",
+    "BootID": "1778288040",
+    "ConfigID": "4225269",
+    "CacheControl": "max-age=1800",
+    "Source": "\u003cDEVICE_IP\u003e:45185",
+    "Headers": {
+      "BOOTID.UPNP.ORG": "1778288040",
+      "CACHE-CONTROL": "max-age=1800",
+      "CONFIGID.UPNP.ORG": "4225269",
+      "DATE": "Sat, 09 May 2026 13:39:46 GMT",
+      "EXT": "",
+      "LOCATION": "http://\u003cDEVICE_IP\u003e:1374/description.xml",
+      "SERVER": "UPnP/1.0 DLNADOC/1.50 Platinum/1.0.5.13",
+      "ST": "uuid:800a805eef11-dmr",
+      "USN": "uuid:800a805eef11-dmr"
+    }
+  },
+  {
+    "USN": "uuid:800a805eef11-dmr::urn:schemas-upnp-org:device:MediaRenderer:1",
+    "ST": "urn:schemas-upnp-org:device:MediaRenderer:1",
+    "Location": "http://\u003cDEVICE_IP\u003e:1374/description.xml",
+    "Server": "UPnP/1.0 DLNADOC/1.50 Platinum/1.0.5.13",
+    "BootID": "1778288040",
+    "ConfigID": "4225269",
+    "CacheControl": "max-age=1800",
+    "Source": "\u003cDEVICE_IP\u003e:45185",
+    "Headers": {
+      "BOOTID.UPNP.ORG": "1778288040",
+      "CACHE-CONTROL": "max-age=1800",
+      "CONFIGID.UPNP.ORG": "4225269",
+      "DATE": "Sat, 09 May 2026 13:39:46 GMT",
+      "EXT": "",
+      "LOCATION": "http://\u003cDEVICE_IP\u003e:1374/description.xml",
+      "SERVER": "UPnP/1.0 DLNADOC/1.50 Platinum/1.0.5.13",
+      "ST": "urn:schemas-upnp-org:device:MediaRenderer:1",
+      "USN": "uuid:800a805eef11-dmr::urn:schemas-upnp-org:device:MediaRenderer:1"
+    }
+  },
+  {
+    "USN": "uuid:800a805eef11-dmr::urn:schemas-upnp-org:service:AVTransport:1",
+    "ST": "urn:schemas-upnp-org:service:AVTransport:1",
+    "Location": "http://\u003cDEVICE_IP\u003e:1374/description.xml",
+    "Server": "UPnP/1.0 DLNADOC/1.50 Platinum/1.0.5.13",
+    "BootID": "1778288040",
+    "ConfigID": "4225269",
+    "CacheControl": "max-age=1800",
+    "Source": "\u003cDEVICE_IP\u003e:45185",
+    "Headers": {
+      "BOOTID.UPNP.ORG": "1778288040",
+      "CACHE-CONTROL": "max-age=1800",
+      "CONFIGID.UPNP.ORG": "4225269",
+      "DATE": "Sat, 09 May 2026 13:39:46 GMT",
+      "EXT": "",
+      "LOCATION": "http://\u003cDEVICE_IP\u003e:1374/description.xml",
+      "SERVER": "UPnP/1.0 DLNADOC/1.50 Platinum/1.0.5.13",
+      "ST": "urn:schemas-upnp-org:service:AVTransport:1",
+      "USN": "uuid:800a805eef11-dmr::urn:schemas-upnp-org:service:AVTransport:1"
+    }
+  },
+  {
+    "USN": "uuid:800a805eef11-dmr::urn:schemas-upnp-org:service:ConnectionManager:1",
+    "ST": "urn:schemas-upnp-org:service:ConnectionManager:1",
+    "Location": "http://\u003cDEVICE_IP\u003e:1374/description.xml",
+    "Server": "UPnP/1.0 DLNADOC/1.50 Platinum/1.0.5.13",
+    "BootID": "1778288040",
+    "ConfigID": "4225269",
+    "CacheControl": "max-age=1800",
+    "Source": "\u003cDEVICE_IP\u003e:45185",
+    "Headers": {
+      "BOOTID.UPNP.ORG": "1778288040",
+      "CACHE-CONTROL": "max-age=1800",
+      "CONFIGID.UPNP.ORG": "4225269",
+      "DATE": "Sat, 09 May 2026 13:39:46 GMT",
+      "EXT": "",
+      "LOCATION": "http://\u003cDEVICE_IP\u003e:1374/description.xml",
+      "SERVER": "UPnP/1.0 DLNADOC/1.50 Platinum/1.0.5.13",
+      "ST": "urn:schemas-upnp-org:service:ConnectionManager:1",
+      "USN": "uuid:800a805eef11-dmr::urn:schemas-upnp-org:service:ConnectionManager:1"
+    }
+  },
+  {
+    "USN": "uuid:800a805eef11-dmr::urn:schemas-upnp-org:service:RenderingControl:1",
+    "ST": "urn:schemas-upnp-org:service:RenderingControl:1",
+    "Location": "http://\u003cDEVICE_IP\u003e:1374/description.xml",
+    "Server": "UPnP/1.0 DLNADOC/1.50 Platinum/1.0.5.13",
+    "BootID": "1778288040",
+    "ConfigID": "4225269",
+    "CacheControl": "max-age=1800",
+    "Source": "\u003cDEVICE_IP\u003e:45185",
+    "Headers": {
+      "BOOTID.UPNP.ORG": "1778288040",
+      "CACHE-CONTROL": "max-age=1800",
+      "CONFIGID.UPNP.ORG": "4225269",
+      "DATE": "Sat, 09 May 2026 13:39:46 GMT",
+      "EXT": "",
+      "LOCATION": "http://\u003cDEVICE_IP\u003e:1374/description.xml",
+      "SERVER": "UPnP/1.0 DLNADOC/1.50 Platinum/1.0.5.13",
+      "ST": "urn:schemas-upnp-org:service:RenderingControl:1",
+      "USN": "uuid:800a805eef11-dmr::urn:schemas-upnp-org:service:RenderingControl:1"
+    }
+  },
+  {
+    "USN": "uuid:800a805eef11-dmr::urn:schemas-upnp-org:device:MediaRenderer:1",
+    "ST": "urn:schemas-upnp-org:device:MediaRenderer:1",
+    "Location": "http://\u003cDEVICE_IP\u003e:1374/description.xml",
+    "Server": "UPnP/1.0 DLNADOC/1.50 Platinum/1.0.5.13",
+    "BootID": "1778288040",
+    "ConfigID": "4225269",
+    "CacheControl": "max-age=1800",
+    "Source": "\u003cDEVICE_IP\u003e:57384",
+    "Headers": {
+      "BOOTID.UPNP.ORG": "1778288040",
+      "CACHE-CONTROL": "max-age=1800",
+      "CONFIGID.UPNP.ORG": "4225269",
+      "DATE": "Sat, 09 May 2026 13:39:46 GMT",
+      "EXT": "",
+      "LOCATION": "http://\u003cDEVICE_IP\u003e:1374/description.xml",
+      "SERVER": "UPnP/1.0 DLNADOC/1.50 Platinum/1.0.5.13",
+      "ST": "urn:schemas-upnp-org:device:MediaRenderer:1",
+      "USN": "uuid:800a805eef11-dmr::urn:schemas-upnp-org:device:MediaRenderer:1"
+    }
+  },
+  {
+    "USN": "uuid:800a805eef11-dmr::urn:schemas-upnp-org:service:AVTransport:1",
+    "ST": "urn:schemas-upnp-org:service:AVTransport:1",
+    "Location": "http://\u003cDEVICE_IP\u003e:1374/description.xml",
+    "Server": "UPnP/1.0 DLNADOC/1.50 Platinum/1.0.5.13",
+    "BootID": "1778288040",
+    "ConfigID": "4225269",
+    "CacheControl": "max-age=1800",
+    "Source": "\u003cDEVICE_IP\u003e:50379",
+    "Headers": {
+      "BOOTID.UPNP.ORG": "1778288040",
+      "CACHE-CONTROL": "max-age=1800",
+      "CONFIGID.UPNP.ORG": "4225269",
+      "DATE": "Sat, 09 May 2026 13:39:46 GMT",
+      "EXT": "",
+      "LOCATION": "http://\u003cDEVICE_IP\u003e:1374/description.xml",
+      "SERVER": "UPnP/1.0 DLNADOC/1.50 Platinum/1.0.5.13",
+      "ST": "urn:schemas-upnp-org:service:AVTransport:1",
+      "USN": "uuid:800a805eef11-dmr::urn:schemas-upnp-org:service:AVTransport:1"
+    }
+  },
+  {
+    "USN": "uuid:800a805eef11-dmr::upnp:rootdevice",
+    "ST": "upnp:rootdevice",
+    "Location": "http://\u003cDEVICE_IP\u003e:1374/description.xml",
+    "Server": "UPnP/1.0 DLNADOC/1.50 Platinum/1.0.5.13",
+    "BootID": "1778288040",
+    "ConfigID": "4225269",
+    "CacheControl": "max-age=1800",
+    "Source": "\u003cDEVICE_IP\u003e:51846",
+    "Headers": {
+      "BOOTID.UPNP.ORG": "1778288040",
+      "CACHE-CONTROL": "max-age=1800",
+      "CONFIGID.UPNP.ORG": "4225269",
+      "DATE": "Sat, 09 May 2026 13:39:47 GMT",
+      "EXT": "",
+      "LOCATION": "http://\u003cDEVICE_IP\u003e:1374/description.xml",
+      "SERVER": "UPnP/1.0 DLNADOC/1.50 Platinum/1.0.5.13",
+      "ST": "upnp:rootdevice",
+      "USN": "uuid:800a805eef11-dmr::upnp:rootdevice"
+    }
+  }
+]
