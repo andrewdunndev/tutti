@@ -1,0 +1,111 @@
+# tutti CI: dunn.dev/pipeline catalog @2.0.3.
+#
+# v2.0.0 contract: every component image resolves to ci-go:$[[
+# component.version ]], so pinning the catalog at one tag pins the
+# whole tooling matrix. Tag pipelines (release stage) only fire on
+# `v*` and stay deliberately uncovered until we cut tutti's first
+# tag.
+
+default:
+  tags:
+    - storr
+  interruptible: true
+
+workflow:
+  auto_cancel:
+    on_new_commit: interruptible
+    on_job_failure: all
+
+stages:
+  - lint
+  - test
+  - build
+  - package
+  - release
+
+variables:
+  GOFLAGS: -mod=readonly
+
+include:
+  # Lint: golangci-lint via the catalog's pinned ci-go. Real gate.
+  - component: gitlab.com/dunn.dev/pipeline/go-lint@2.0.3
+
+  # Audit: govulncheck on every push. allow_failure by default
+  # (vuln-DB shifts shouldn't block a release).
+  - component: gitlab.com/dunn.dev/pipeline/go-audit@2.0.3
+
+  # Branch verification: parallel:matrix cross-compile on every
+  # push (linux/amd64, linux/arm64, darwin/arm64). Skipped on tag
+  # pipelines (go-release-binary supersedes).
+  - component: gitlab.com/dunn.dev/pipeline/go-build@2.0.3
+    inputs:
+      binary_name: tutti
+      package_path: ./cmd/tutti
+
+  # Tag-only: parallel:matrix cross-compile + per-binary cosign
+  # signature + per-binary .sha256 + upload to package registry.
+  - component: gitlab.com/dunn.dev/pipeline/go-release-binary@2.0.3
+    inputs:
+      binary_name: tutti
+      package_path: ./cmd/tutti
+      package_name: tutti
+
+  # Tag-only: CycloneDX SBOM per binary via syft.
+  - component: gitlab.com/dunn.dev/pipeline/go-sbom@2.0.3
+    inputs:
+      package_name: tutti
+
+  # Tag-only: SLSA v1.0 provenance per binary, cosign-signed via
+  # GitLab OIDC keyless.
+  - component: gitlab.com/dunn.dev/pipeline/slsa-attest@2.0.3
+
+  # Tag-only: GitLab Release with binaries + SBOMs + attestations
+  # linked. Idempotent across pipeline reruns.
+  - component: gitlab.com/dunn.dev/pipeline/release-create@2.0.3
+    inputs:
+      package_name: tutti
+
+# Schema-sync guard. The canonical schema/manifest.v1.json is
+# mirrored into internal/schema/ for go:embed; `make sync-schema`
+# does the copy locally. CI catches the case where a contributor
+# edits one and forgets to mirror.
+schema-sync:
+  stage: lint
+  image: registry.gitlab.com/dunn.dev/pipeline/ci-go:2.0.3
+  script:
+    - |
+      if ! cmp -s schema/manifest.v1.json internal/schema/manifest.v1.json; then
+        echo "schema/manifest.v1.json differs from internal/schema/manifest.v1.json"
+        echo "Suggested next step: run 'make sync-schema' and commit the result."
+        exit 1
+      fi
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: never
+    - when: on_success
+
+# Test: vet + race-detector test suite. Not in the catalog yet
+# (catalog ships build/lint/audit/release; tutti adds tests as the
+# first Go consumer that has a meaningful test surface). Inline
+# until a go-test catalog component lands.
+test:
+  stage: test
+  image: registry.gitlab.com/dunn.dev/pipeline/ci-go:2.0.3
+  variables:
+    CGO_ENABLED: "1"
+    GOMODCACHE: $CI_PROJECT_DIR/.gomodcache
+    GOCACHE: $CI_PROJECT_DIR/.gocache
+  cache:
+    key:
+      files: [go.sum]
+      prefix: test
+    paths:
+      - .gomodcache/
+      - .gocache/
+  script:
+    - go vet ./...
+    - go test -race ./...
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: never
+    - when: on_success
