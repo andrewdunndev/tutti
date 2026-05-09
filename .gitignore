@@ -1,0 +1,30 @@
+# Go build output
+/tutti
+/tutti-*
+/dist/
+*.test
+*.out
+
+# Local capture output (default working dir)
+/capture-*/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# macOS
+.DS_Store
+
+# Web (Astro) build output
+/web/dist/
+/web/.astro/
+/web/node_modules/
+
+# Goreleaser local
+/goreleaser/
+
+# Direct env / local config
+.env
+.env.local

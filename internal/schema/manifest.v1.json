@@ -1,0 +1,293 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tutti.dunn.dev/schema/manifest.v1.json",
+  "title": "tutti capture manifest, schema v1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "tutti_version",
+    "capture_id",
+    "captured_at",
+    "host",
+    "scaninfo",
+    "runstats",
+    "redactions",
+    "devices"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "const": 1 },
+    "tutti_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(-[A-Za-z0-9.-]+)?$" },
+    "capture_id":    { "type": "string", "pattern": "^[0-9A-HJKMNP-TV-Z]{26}$" },
+    "captured_at":   { "type": "string", "format": "date-time" },
+    "contributor": {
+      "oneOf": [
+        { "type": "null" },
+        { "type": "string", "pattern": "^(github|gitlab):[A-Za-z0-9._-]+$" }
+      ]
+    },
+    "host": {
+      "type": "object",
+      "required": ["os", "arch", "interfaces"],
+      "additionalProperties": false,
+      "properties": {
+        "os":         { "type": "string", "enum": ["darwin", "linux", "windows", "freebsd", "openbsd", "netbsd"] },
+        "arch":       { "type": "string", "enum": ["amd64", "arm64", "386", "arm"] },
+        "interfaces": { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+      }
+    },
+    "scaninfo": {
+      "type": "object",
+      "required": ["ssdp_st_list", "ssdp_mx", "mdns_service_types"],
+      "additionalProperties": false,
+      "properties": {
+        "ssdp_st_list":        { "type": "array", "items": { "type": "string" } },
+        "ssdp_mx":             { "type": "integer", "minimum": 1, "maximum": 5 },
+        "mdns_service_types":  { "type": "array", "items": { "type": "string" } },
+        "drive_requested":     { "type": "boolean" },
+        "drive_force":         { "type": "boolean" },
+        "no_redact":           { "type": "boolean" },
+        "allow_empty":         { "type": "boolean" }
+      }
+    },
+    "runstats": {
+      "type": "object",
+      "required": ["elapsed_seconds", "ssdp_responses", "ssdp_unique_usns", "mdns_records", "exit"],
+      "additionalProperties": false,
+      "properties": {
+        "elapsed_seconds":    { "type": "number", "minimum": 0 },
+        "ssdp_responses":     { "type": "integer", "minimum": 0 },
+        "ssdp_unique_usns":   { "type": "integer", "minimum": 0 },
+        "mdns_records":       { "type": "integer", "minimum": 0 },
+        "exit":               { "type": "string", "enum": ["success", "partial", "error"] }
+      }
+    },
+    "redactions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "client-ip",
+          "device-ip",
+          "auth-tokens",
+          "salt",
+          "username",
+          "lan-topology",
+          "internal-hostname"
+        ]
+      }
+    },
+    "devices": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/device" }
+    }
+  },
+  "$defs": {
+    "device": {
+      "type": "object",
+      "required": ["slug", "discovery"],
+      "additionalProperties": false,
+      "properties": {
+        "slug":      { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+        "vendor":    { "type": "string" },
+        "model":     { "type": "string" },
+        "firmware":  { "type": "string" },
+        "udn":       { "type": "string" },
+        "tags":      { "type": "array", "items": { "type": "string" } },
+
+        "discovery": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "ssdp_usns":      { "type": "array", "items": { "type": "string" } },
+            "mdns_services":  { "type": "array", "items": { "$ref": "#/$defs/mdns_service" } }
+          }
+        },
+
+        "descriptor": {
+          "type": "object",
+          "required": ["url_redacted", "raw_file", "parsed"],
+          "additionalProperties": false,
+          "properties": {
+            "url_redacted": { "type": "string" },
+            "raw_file":     { "type": "string" },
+            "parsed":       { "$ref": "#/$defs/descriptor_parsed" }
+          }
+        },
+
+        "decisions": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": { "$ref": "#/$defs/decision" }
+        },
+
+        "protocol_info": { "$ref": "#/$defs/protocol_info" },
+
+        "drive_test": { "$ref": "#/$defs/drive_test" }
+      },
+      "anyOf": [
+        { "required": ["decisions"] },
+        { "required": ["protocol_info"] },
+        { "required": ["drive_test"] },
+        { "required": ["descriptor"] }
+      ]
+    },
+
+    "mdns_service": {
+      "type": "object",
+      "required": ["service_type", "instance"],
+      "additionalProperties": false,
+      "properties": {
+        "service_type": { "type": "string" },
+        "instance":     { "type": "string" },
+        "hostname":     { "type": "string" },
+        "port":         { "type": "integer", "minimum": 0, "maximum": 65535 },
+        "addrs":        { "type": "array", "items": { "type": "string" } },
+        "txt":          { "type": "object", "additionalProperties": { "type": "string" } }
+      }
+    },
+
+    "descriptor_parsed": {
+      "type": "object",
+      "required": ["device_type", "friendly_name", "udn", "services"],
+      "additionalProperties": false,
+      "properties": {
+        "device_type":       { "type": "string" },
+        "friendly_name":     { "type": "string" },
+        "manufacturer":      { "type": "string" },
+        "manufacturer_url":  { "type": "string" },
+        "model_description": { "type": "string" },
+        "model_name":        { "type": "string" },
+        "model_url":         { "type": "string" },
+        "model_number":      { "type": "string" },
+        "serial_number":     { "type": "string" },
+        "udn":               { "type": "string" },
+        "presentation_url":  { "type": "string" },
+        "x_dlna_doc":        { "type": "string" },
+        "icons": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "mime":   { "type": "string" },
+              "width":  { "type": "integer" },
+              "height": { "type": "integer" },
+              "depth":  { "type": "integer" },
+              "url":    { "type": "string" }
+            }
+          }
+        },
+        "services": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["service_type"],
+            "additionalProperties": false,
+            "properties": {
+              "service_type":  { "type": "string" },
+              "service_id":    { "type": "string" },
+              "scpd_url":      { "type": "string" },
+              "control_url":   { "type": "string" },
+              "event_sub_url": { "type": "string" }
+            }
+          }
+        },
+        "embedded_devices": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/descriptor_parsed" }
+        }
+      }
+    },
+
+    "decision": {
+      "type": "object",
+      "required": ["result", "reason_code", "method"],
+      "additionalProperties": false,
+      "properties": {
+        "result":      { "type": "string", "enum": ["accepted", "rejected", "errored"] },
+        "reason_code": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+        "reason_text": { "type": "string" },
+        "method":      { "type": "string", "enum": ["library_call", "reimplementation"] },
+        "confidence":  { "type": "string", "enum": ["low", "medium", "high"] }
+      }
+    },
+
+    "protocol_info": {
+      "type": "object",
+      "required": ["sink_count", "audio_sink_count", "format_matches", "raw_file"],
+      "additionalProperties": false,
+      "properties": {
+        "source_count":     { "type": "integer", "minimum": 0 },
+        "sink_count":       { "type": "integer", "minimum": 0 },
+        "audio_sink_count": { "type": "integer", "minimum": 0 },
+        "format_matches": {
+          "type": "object",
+          "additionalProperties": {
+            "oneOf": [
+              { "type": "null" },
+              { "type": "integer", "minimum": 0 }
+            ]
+          }
+        },
+        "raw_file": { "type": "string" }
+      }
+    },
+
+    "drive_test": {
+      "type": "object",
+      "required": ["performed"],
+      "additionalProperties": false,
+      "properties": {
+        "performed": { "type": "boolean" },
+        "skipped_reason": { "type": "string" },
+        "runs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/drive_run" }
+        }
+      },
+      "allOf": [
+        {
+          "if":   { "properties": { "performed": { "const": true } }, "required": ["performed"] },
+          "then": { "required": ["runs"], "properties": { "runs": { "minItems": 1 } } }
+        }
+      ]
+    },
+
+    "drive_run": {
+      "type": "object",
+      "required": ["scenario", "mime", "result", "transitions", "transcript_file"],
+      "additionalProperties": false,
+      "properties": {
+        "scenario":              { "type": "string" },
+        "mime":                  { "type": "string" },
+        "rate_hz":               { "type": "integer" },
+        "bits":                  { "type": "integer" },
+        "channels":              { "type": "integer" },
+        "metadata_didl_lite_sent": { "$ref": "#/$defs/didl_metadata" },
+        "metadata_embedded":       { "$ref": "#/$defs/didl_metadata" },
+        "metadata_echoed":         { "$ref": "#/$defs/didl_metadata" },
+        "metadata_source":         { "type": "string", "enum": ["didl-lite", "embedded", "mixed", "none"] },
+        "metadata_round_trip":     { "type": "string", "enum": ["matched", "mismatched", "absent"] },
+        "art_fetch_observed":      { "type": "boolean" },
+        "result":                  { "type": "string", "enum": ["playing", "transitioning", "stopped", "errored", "rejected"] },
+        "result_reason":           { "type": "string" },
+        "transitions":             { "type": "array", "items": { "type": "string" } },
+        "transcript_file":         { "type": "string" },
+        "elapsed_seconds":         { "type": "number", "minimum": 0 }
+      }
+    },
+
+    "didl_metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "title":   { "type": "string" },
+        "artist":  { "type": "string" },
+        "album":   { "type": "string" },
+        "art_url": { "type": "string" },
+        "art_card": { "type": "string" }
+      }
+    }
+  }
+}
