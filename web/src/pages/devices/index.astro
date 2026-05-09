@@ -29,6 +29,7 @@ const devices = Array.from(corpus.values()).sort((a, b) =>
           <th>Model</th>
           <th>Discovery</th>
           <th>Drive</th>
+          <th>Music source</th>
           <th>Last captured</th>
           <th>Captures</th>
         </tr>
@@ -37,12 +38,18 @@ const devices = Array.from(corpus.values()).sort((a, b) =>
         {devices.map(d => {
           const dec = decisionSummary(d.headlineDevice);
           const drv = driveSummary(d.headlineDevice);
+          const sources = d.meta?.music_sources ?? [];
           return (
             <tr>
               <td>{d.vendor ?? '—'}</td>
               <td><a href={`/devices/${d.slug}/`}>{d.model ?? d.slug}</a></td>
               <td><span class:list={['tag', dec.tone === 'mute' ? '' : dec.tone]}>{dec.label}</span></td>
               <td><span class:list={['tag', drv.tone === 'mute' ? '' : drv.tone]}>{drv.label}</span></td>
+              <td>
+                {sources.length > 0
+                  ? sources.map(s => <span class="tag source-tag">{s}</span>)
+                  : <span class="text-muted">—</span>}
+              </td>
               <td class="mono">{formatDate(d.latest.data.captured_at)}</td>
               <td class="mono">{d.history.length}</td>
             </tr>
@@ -61,12 +68,17 @@ const devices = Array.from(corpus.values()).sort((a, b) =>
 </Layout>
 
 <style>
-  .devices-table th:nth-child(5),
   .devices-table th:nth-child(6),
-  .devices-table td:nth-child(5),
-  .devices-table td:nth-child(6) {
+  .devices-table th:nth-child(7),
+  .devices-table td:nth-child(6),
+  .devices-table td:nth-child(7) {
     white-space: nowrap;
   }
+  .source-tag {
+    margin-right: var(--space-1);
+    margin-bottom: var(--space-1);
+  }
+  .text-muted { color: var(--text-muted); }
   .empty-note {
     margin-top: var(--space-5);
     color: var(--text-muted);

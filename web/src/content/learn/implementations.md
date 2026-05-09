@@ -12,6 +12,37 @@ Reference for tutti renderer profiling: "what's the device built on / what libra
 
 ## Renderer-side stacks
 
+<div class="cat-explainer">
+<svg viewBox="0 0 720 200" role="img" aria-label="Renderer-side stack: software inside the playback device that accepts SOAP calls and drives the DAC.">
+  <rect x="20" y="20" width="680" height="160" fill="#ffffff" stroke="#e0e0e0" stroke-width="1" rx="3"/>
+  <text x="40" y="46" font-family="IBM Plex Mono, monospace" font-size="10" font-weight="700" fill="#707070" letter-spacing="1.4">SOMEONE'S DEVICE</text>
+
+  <rect x="40" y="60" width="120" height="100" rx="3" fill="#f4f4f4" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="100" y="90"  text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" font-weight="600" fill="#0a0a0a">network</text>
+  <text x="100" y="110" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9"  fill="#707070">SOAP arrives</text>
+  <text x="100" y="125" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9"  fill="#707070">SetAVTransportURI</text>
+
+  <line x1="160" y1="110" x2="220" y2="110" stroke="#4a6741" stroke-width="2"/>
+  <polygon points="220,110 210,105 210,115" fill="#4a6741"/>
+
+  <rect x="220" y="60" width="220" height="100" rx="3" fill="#ffffff" stroke="#4a6741" stroke-width="2"/>
+  <text x="330" y="86"  text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" font-weight="700" fill="#4a6741" letter-spacing="1.4">RENDERER STACK</text>
+  <text x="330" y="110" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="13" font-weight="700" fill="#4a6741">this category</text>
+  <text x="330" y="130" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="#404040">SOAP server · state machine</text>
+  <text x="330" y="146" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="#404040">stream fetch · decoder glue</text>
+
+  <line x1="440" y1="110" x2="500" y2="110" stroke="#707070" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <polygon points="500,110 490,105 490,115" fill="#707070"/>
+
+  <rect x="500" y="60" width="180" height="100" rx="3" fill="#f4f4f4" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="590" y="90"  text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" font-weight="600" fill="#0a0a0a">decoder + DAC</text>
+  <text x="590" y="110" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9"  fill="#707070">vendor's audio path</text>
+  <text x="590" y="125" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9"  fill="#707070">analog out</text>
+</svg>
+
+The compiled-into-firmware part. You don't usually see this code; it ships baked into the device. When a renderer accepts a UPnP cast, this is what answered the SOAP call.
+</div>
+
 These run on the playback device and implement the UPnP AV MediaRenderer device type. They handle incoming SetAVTransportURI/Play/Seek SOAP calls and produce audio.
 
 ### Platinum SDK (plutinosoft)
@@ -153,6 +184,36 @@ https://github.com/openairplay/openairplay   (protocol reverse engineering)
 
 ## Control-point libraries
 
+<div class="cat-explainer">
+<svg viewBox="0 0 720 200" role="img" aria-label="Control-point library: SSDP and SOAP plumbing that lives inside a music app.">
+  <rect x="20" y="20" width="500" height="160" fill="#ffffff" stroke="#e0e0e0" stroke-width="1" rx="3"/>
+  <text x="40" y="46" font-family="IBM Plex Mono, monospace" font-size="10" font-weight="700" fill="#707070" letter-spacing="1.4">A MUSIC APP</text>
+
+  <rect x="40" y="60" width="180" height="100" rx="3" fill="#f4f4f4" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="130" y="90"  text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" font-weight="600" fill="#0a0a0a">UI + library</text>
+  <text x="130" y="110" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9"  fill="#707070">cast button, playlist</text>
+  <text x="130" y="125" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9"  fill="#707070">device picker</text>
+
+  <line x1="220" y1="110" x2="280" y2="110" stroke="#4a6741" stroke-width="2"/>
+  <polygon points="280,110 270,105 270,115" fill="#4a6741"/>
+
+  <rect x="280" y="60" width="220" height="100" rx="3" fill="#ffffff" stroke="#4a6741" stroke-width="2"/>
+  <text x="390" y="86"  text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" font-weight="700" fill="#4a6741" letter-spacing="1.4">CONTROL-POINT LIBRARY</text>
+  <text x="390" y="110" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="13" font-weight="700" fill="#4a6741">this category</text>
+  <text x="390" y="130" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="#404040">SSDP discovery · descriptor parse</text>
+  <text x="390" y="146" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="#404040">SOAP envelopes · DIDL-Lite</text>
+
+  <line x1="540" y1="110" x2="600" y2="110" stroke="#4a6741" stroke-width="2"/>
+  <polygon points="600,110 590,105 590,115" fill="#4a6741"/>
+
+  <rect x="580" y="60" width="120" height="100" rx="3" fill="#f4f4f4" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="640" y="90"  text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" font-weight="600" fill="#0a0a0a">network</text>
+  <text x="640" y="110" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9"  fill="#707070">to renderer</text>
+</svg>
+
+A library, not an app. It's what an app uses to <em>talk to</em> renderers — the part that knows how to open a UDP socket for SSDP, parse a descriptor, and assemble a SOAP envelope. tutti's library-decision matrix asks: which library would your device's descriptor pass?
+</div>
+
 These run in the application that discovers and drives renderers.
 
 ### huin/goupnp
@@ -290,6 +351,37 @@ https://github.com/katoemba/SwiftUPnP
 
 ## End-user clients
 
+<div class="cat-explainer">
+<svg viewBox="0 0 720 200" role="img" aria-label="End-user client: a complete music app with UI plus an embedded control-point library.">
+  <rect x="20" y="60" width="60" height="100" rx="30" fill="#f4f4f4" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="50" y="115" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" font-weight="600" fill="#0a0a0a">user</text>
+
+  <line x1="80" y1="110" x2="140" y2="110" stroke="#4a6741" stroke-width="2"/>
+  <polygon points="140,110 130,105 130,115" fill="#4a6741"/>
+
+  <rect x="140" y="40" width="380" height="140" rx="3" fill="#ffffff" stroke="#4a6741" stroke-width="2"/>
+  <text x="160" y="62" font-family="IBM Plex Mono, monospace" font-size="10" font-weight="700" fill="#4a6741" letter-spacing="1.4">END-USER CLIENT</text>
+  <text x="330" y="98" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="13" font-weight="700" fill="#4a6741">the whole app</text>
+
+  <rect x="160" y="115" width="160" height="50" rx="2" fill="#f4f4f4" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="240" y="138" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" font-weight="600" fill="#0a0a0a">UI + playlist</text>
+  <text x="240" y="155" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9"  fill="#707070">supersonic, Feishin, etc.</text>
+
+  <rect x="340" y="115" width="160" height="50" rx="2" fill="#f4f4f4" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="420" y="138" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" font-weight="600" fill="#0a0a0a">CP library</text>
+  <text x="420" y="155" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9"  fill="#707070">go-upnpcast, jupnp, etc.</text>
+
+  <line x1="520" y1="110" x2="580" y2="110" stroke="#4a6741" stroke-width="2"/>
+  <polygon points="580,110 570,105 570,115" fill="#4a6741"/>
+
+  <rect x="580" y="60" width="120" height="100" rx="3" fill="#f4f4f4" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="640" y="105" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" font-weight="600" fill="#0a0a0a">renderers</text>
+  <text x="640" y="122" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9"  fill="#707070">on the LAN</text>
+</svg>
+
+A library wrapped in a UI. The user clicks "cast to," the UI calls into the embedded control-point library, the library does the SSDP/SOAP work. When tutti finds a parser hazard, the failure shows up to the user as "device missing from picker" inside one of these apps.
+</div>
+
 ### supersonic (dweymouth)
 
 Cross-platform desktop client for Subsonic/OpenSubsonic and Jellyfin servers. Go + Fyne UI toolkit + MPV audio. UPnP casting via `supersonic-app/go-upnpcast`. Open source, MIT license.
@@ -389,6 +481,35 @@ https://www.foobar2000.org/components/view/foo_upnp
 ---
 
 ## Bridges and servers
+
+<div class="cat-explainer">
+<svg viewBox="0 0 720 200" role="img" aria-label="Bridge / server: turns a media library into HTTP URLs the renderer can fetch.">
+  <rect x="20" y="60" width="120" height="100" rx="3" fill="#f4f4f4" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="80" y="90"  text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" font-weight="600" fill="#0a0a0a">media library</text>
+  <text x="80" y="110" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9"  fill="#707070">your files,</text>
+  <text x="80" y="124" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9"  fill="#707070">streaming source,</text>
+  <text x="80" y="138" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9"  fill="#707070">music playlist</text>
+
+  <line x1="140" y1="110" x2="200" y2="110" stroke="#4a6741" stroke-width="2"/>
+  <polygon points="200,110 190,105 190,115" fill="#4a6741"/>
+
+  <rect x="200" y="60" width="240" height="100" rx="3" fill="#ffffff" stroke="#4a6741" stroke-width="2"/>
+  <text x="320" y="86"  text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" font-weight="700" fill="#4a6741" letter-spacing="1.4">BRIDGE / SERVER</text>
+  <text x="320" y="110" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="13" font-weight="700" fill="#4a6741">this category</text>
+  <text x="320" y="130" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="#404040">indexes media · serves HTTP</text>
+  <text x="320" y="146" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="#404040">DLNA discovery · stream URLs</text>
+
+  <line x1="440" y1="110" x2="500" y2="110" stroke="#707070" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <polygon points="500,110 490,105 490,115" fill="#707070"/>
+
+  <rect x="500" y="60" width="200" height="100" rx="3" fill="#f4f4f4" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="600" y="90"  text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" font-weight="600" fill="#0a0a0a">renderer fetches</text>
+  <text x="600" y="110" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9"  fill="#707070">HTTP GET on the URL</text>
+  <text x="600" y="124" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9"  fill="#707070">the bridge handed it</text>
+</svg>
+
+The source side of the conversation. The control-point doesn't send audio — it sends the URL where the audio lives. The bridge or server is what serves that URL when the renderer asks for it. Subsonic/Navidrome/Plex aren't UPnP themselves but slot into the same role for clients that speak their APIs.
+</div>
 
 ### upmpdcli
 

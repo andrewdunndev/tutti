@@ -26,6 +26,12 @@
       "type": "boolean",
       "description": "Set true when the manufacturer no longer sells the product. The site flags discontinued devices so contributors don't expect firmware updates that aren't coming."
     },
+    "music_sources": {
+      "type": "array",
+      "uniqueItems": true,
+      "description": "Music backends that contributors have actually used with this device (Navidrome, Subsonic, Plex, Roon, Spotify Connect, etc.). Soft signal, not a guarantee. Lets a reader scanning the corpus answer 'will my Navidrome library work with this device?' at a glance.",
+      "items": { "type": "string", "minLength": 1 }
+    },
     "links": {
       "type": "object",
       "additionalProperties": false,

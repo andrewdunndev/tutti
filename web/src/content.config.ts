@@ -184,6 +184,7 @@ const deviceMetaSchema = z.object({
   product_name: z.string().min(1),
   tagline: z.string().optional(),
   discontinued: z.boolean().optional(),
+  music_sources: z.array(z.string().min(1)).optional(),
   links: z.object({
     manufacturer: z.string().url().optional(),
     support: z.string().url().optional(),
