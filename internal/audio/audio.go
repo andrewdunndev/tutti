@@ -208,6 +208,6 @@ func PickOutboundIP(target net.IP) (net.IP, error) {
 	if err != nil {
 		return nil, fmt.Errorf("pick outbound IP toward %s: %w", target, err)
 	}
-	defer c.Close()
+	defer func() { _ = c.Close() }()
 	return c.LocalAddr().(*net.UDPAddr).IP, nil
 }

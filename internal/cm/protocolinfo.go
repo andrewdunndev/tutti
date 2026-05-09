@@ -110,7 +110,7 @@ func GetProtocolInfo(ctx context.Context, controlURL string) (schema.ProtocolInf
 	if err != nil {
 		return schema.ProtocolInfo{}, nil, fmt.Errorf("cm: do request: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {

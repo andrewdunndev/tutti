@@ -423,7 +423,7 @@ func runDrive(ctx context.Context, d *schema.Device, parsed schema.DescriptorPar
 		skip := schema.DriveTest{Performed: false, SkippedReason: "audio server start failed: " + err.Error()}
 		return &skip
 	}
-	defer srv.Stop()
+	defer func() { _ = srv.Stop() }()
 
 	// Intersect tones with the device's announced sink list when known.
 	tones := audio.Matrix
@@ -587,10 +587,7 @@ func hostMatches(urlRedacted string, svc schema.MDNSService) bool {
 			return true
 		}
 	}
-	if strings.EqualFold(svc.Hostname, h) {
-		return true
-	}
-	return false
+	return strings.EqualFold(svc.Hostname, h)
 }
 
 func writeJSON(path string, v any) {

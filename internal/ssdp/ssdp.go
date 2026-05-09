@@ -155,7 +155,7 @@ func probeOne(ctx context.Context, ifi *net.Interface, mcast *net.UDPAddr, stLis
 	if err != nil {
 		return fmt.Errorf("bind: %w", err)
 	}
-	defer conn.Close()
+	defer func() { _ = conn.Close() }()
 
 	for _, st := range stList {
 		payload := buildMSearch(st, mxSeconds)

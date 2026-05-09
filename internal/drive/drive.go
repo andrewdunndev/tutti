@@ -300,10 +300,8 @@ func driveOne(
 	sawEmbedded := false
 	var lastEchoedMeta *schema.DIDLMetadata
 	var lastEchoedRaw string
-	for {
-		if time.Now().After(deadline) {
-			break
-		}
+pollLoop:
+	for !time.Now().After(deadline) {
 		tick++
 
 		ts, tb, terr := soapCall(ctx, client, opts.AVTransportControlURL, "GetTransportInfo", argsInstanceOnly())
@@ -335,14 +333,13 @@ func driveOne(
 		}
 
 		// Sleep the interval, but bail out if the context is dead so
-		// callers can shut us down promptly.
+		// callers can shut us down promptly. The labeled break is
+		// load-bearing: a bare `break` inside a `select` only exits
+		// the select, not the for-loop.
 		select {
 		case <-ctx.Done():
-			break
+			break pollLoop
 		case <-time.After(pollInterval):
-		}
-		if ctx.Err() != nil {
-			break
 		}
 	}
 
@@ -513,7 +510,7 @@ func soapCall(ctx context.Context, client *http.Client, controlURL, action, args
 	if err != nil {
 		return 0, nil, fmt.Errorf("do request: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return resp.StatusCode, nil, fmt.Errorf("read response: %w", err)
@@ -565,10 +562,11 @@ func parseSimpleResponse(body []byte) (map[string]string, error) {
 				top = stack[len(stack)-1]
 				stack = stack[:len(stack)-1]
 			}
-			if top != t.Name.Local {
-				// Mismatched tags: with Strict=false we may see this on
-				// minor whitespace oddities. Best-effort recovery.
-			}
+			// Mismatched top != t.Name.Local: with Strict=false we may
+			// see this on minor whitespace oddities. Best-effort
+			// recovery means just popping the stack without acting on
+			// the mismatch.
+			_ = top
 			if inFault {
 				if t.Name.Local == "Fault" {
 					inFault = false

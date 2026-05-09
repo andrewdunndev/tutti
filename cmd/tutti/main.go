@@ -55,7 +55,7 @@ func main() {
 }
 
 func usage(w *os.File) {
-	fmt.Fprintf(w, `tutti %s — LAN audio renderer probe
+	_, _ = fmt.Fprintf(w, `tutti %s — LAN audio renderer probe
 
 Usage:
   tutti capture [flags]              walk LAN, write capture-<ts>-<host>/

@@ -1,6 +1,7 @@
 package drive
 
 import (
+	"context"
 	"encoding/xml"
 	"strings"
 	"testing"
@@ -283,7 +284,7 @@ func TestAppendUnique(t *testing.T) {
 // would fail manifest validation (drive_test requires runs when
 // performed=true).
 func TestRun_NoTones(t *testing.T) {
-	got, err := Run(nil, Options{
+	got, err := Run(context.TODO(), Options{
 		AVTransportControlURL: "http://example/control",
 		Tones:                 nil,
 	})
@@ -300,7 +301,7 @@ func TestRun_NoTones(t *testing.T) {
 
 // TestRun_NoControlURL: same path, different reason.
 func TestRun_NoControlURL(t *testing.T) {
-	got, err := Run(nil, Options{
+	got, err := Run(context.TODO(), Options{
 		AVTransportControlURL: "",
 	})
 	if err != nil {

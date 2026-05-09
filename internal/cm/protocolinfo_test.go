@@ -248,9 +248,6 @@ func TestParseProtocolInfo_Empty(t *testing.T) {
 // TestRequestEnvelopeWellFormed ensures the SOAP body we POST parses
 // as XML and matches the expected structure.
 func TestRequestEnvelopeWellFormed(t *testing.T) {
-	type body struct {
-		XMLName xml.Name
-	}
 	type envelope struct {
 		XMLName xml.Name
 		Body    struct {
