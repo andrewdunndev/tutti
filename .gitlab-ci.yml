@@ -19,6 +19,7 @@ stages:
   - lint
   - test
   - build
+  - deploy
   - package
   - release
 
@@ -72,6 +73,20 @@ include:
     inputs:
       package_name: tutti
 
+  # Site: build + deploy the Astro corpus site at web/ to Cloudflare
+  # Pages. Build job runs on every push (so MR previews work);
+  # deploy job runs only on main. needs_npm_install: false because
+  # the catalog's default `npm ci` runs at consumer root and we have
+  # no package.json there — tutti's npm context is the web/ subdir,
+  # so we cd there inside the build_command.
+  - component: gitlab.com/dunn.dev/pipeline/cloudflare-pages@2.1.1
+    inputs:
+      cloudflare_project: tutti-dunn-dev
+      build_command: 'cd web && npm ci && npm run build'
+      output_dir: web/dist
+      needs_npm_install: false
+      production_url: https://tutti.dunn.dev
+
 # Matrix overrides on the catalog jobs. Catalog default is
 # linux/amd64 + linux/arm64 + darwin/arm64; we add windows/amd64.
 # Catalog 2.1.1 handles the .exe extension for windows targets in
@@ -108,7 +123,7 @@ package:
 # edits one and forgets to mirror.
 schema-sync:
   stage: lint
-  image: registry.gitlab.com/dunn.dev/pipeline/ci-go:2.0.3
+  image: registry.gitlab.com/dunn.dev/pipeline/ci-go:2.1.1
   script:
     - |
       if ! cmp -s schema/manifest.v1.json internal/schema/manifest.v1.json; then
@@ -127,7 +142,7 @@ schema-sync:
 # until a go-test catalog component lands.
 test:
   stage: test
-  image: registry.gitlab.com/dunn.dev/pipeline/ci-go:2.0.3
+  image: registry.gitlab.com/dunn.dev/pipeline/ci-go:2.1.1
   variables:
     CGO_ENABLED: "1"
     GOMODCACHE: $CI_PROJECT_DIR/.gomodcache
