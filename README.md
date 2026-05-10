@@ -1,5 +1,9 @@
+<p align="center"><img src="brand.png" alt="tutti — a LAN audio renderer probe. Calls out across the network, listens for what each device says, drops a paste-ready evidence bundle." width="900" /></p>
+
 # tutti
 
+[![pipeline](https://gitlab.com/dunn.dev/tutti/badges/main/pipeline.svg)](https://gitlab.com/dunn.dev/tutti/-/pipelines)
+[![release](https://img.shields.io/badge/release-v0.1.0-4a6741)](https://gitlab.com/dunn.dev/tutti/-/releases/v0.1.0)
 [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 ![Go](https://img.shields.io/badge/lang-Go-00ADD8?logo=go&logoColor=white)
 ![Built with GitLab](https://img.shields.io/badge/built_with-GitLab-FC6D26?logo=gitlab)
@@ -94,57 +98,62 @@ Per device on your LAN:
 
 ## Install
 
-### From source (the v0 path)
+Pre-built binaries ship from the [releases page][rel]. Each release
+includes per-binary cosign signatures, `.sha256` sidecars, CycloneDX
+SBOMs, and SLSA v1.0 provenance attestations.
+
+The full per-OS walkthrough lives at
+[tutti.dunn.dev/contribute][contribute] (collapsible blocks for each
+platform). The short form:
+
+### macOS (Apple Silicon)
+
+```sh
+curl -LO https://gitlab.com/dunn.dev/tutti/-/releases/permalink/latest/downloads/tutti-darwin-arm64
+chmod +x tutti-darwin-arm64
+xattr -d com.apple.quarantine ./tutti-darwin-arm64
+mv tutti-darwin-arm64 /usr/local/bin/tutti
+```
+
+The macOS binary is not yet code-signed; the `xattr` step is the
+one-time unquarantine. A signed Homebrew tap is on the roadmap.
+
+### Linux (amd64 or arm64)
+
+```sh
+curl -LO https://gitlab.com/dunn.dev/tutti/-/releases/permalink/latest/downloads/tutti-linux-amd64
+# or tutti-linux-arm64 for ARM Linux
+chmod +x tutti-linux-*
+sudo mv tutti-linux-* /usr/local/bin/tutti
+```
+
+### Windows (amd64)
+
+```powershell
+Invoke-WebRequest `
+  -Uri https://gitlab.com/dunn.dev/tutti/-/releases/permalink/latest/downloads/tutti-windows-amd64.exe `
+  -OutFile tutti.exe
+```
+
+SmartScreen warns on first run; "More info" → "Run anyway" gets
+through. Windows Firewall prompts the first time tutti binds for
+SSDP/mDNS multicast — allow on private networks. Don't run inside
+WSL: WSL networking is NAT'd and can't see host LAN devices.
+
+### From source
 
 ```sh
 git clone https://gitlab.com/dunn.dev/tutti.git
 cd tutti
 make build
-./tutti capture
 ```
 
-Requires Go 1.25 or newer. No other build dependencies; `make build`
-calls `make sync-schema` to copy the canonical schema into the
-embed-source location and then `go build`. ffmpeg is only required if
-you want to regenerate the test-tone matrix (`make gen-tones`); the
-matrix is already committed to the repo.
-
-### Binaries (coming with v0.1)
-
-Pre-built binaries for macOS / Linux / Windows will land on the
-[releases page][rel] once the release pipeline is in place. The macOS
-binary will not be code-signed at v0; first-run friction is one of:
-
-```sh
-xattr -d com.apple.quarantine ./tutti          # explicit unquarantine
-sudo spctl --add ./tutti                        # add to allowed list
-```
-
-A signed Homebrew tap (`brew install dunn.dev/tap/tutti`) is on the
-roadmap once notarization is wired up.
-
-### Windows operational notes
-
-The Windows binary ships as `tutti-windows-amd64.exe`. Two things to
-know on first run:
-
-- **Windows Firewall** prompts when tutti binds UDP sockets for
-  SSDP/mDNS multicast and the transient HTTP server it uses to serve
-  test tones. Click "Allow on private networks" once; the prompt
-  does not return.
-- **Don't run inside WSL.** WSL networking is NAT'd; tutti can't see
-  the host's LAN devices from there. Run `tutti.exe` from native
-  Windows (PowerShell or cmd). If a clean native run finds nothing,
-  pass `--interface "Ethernet"` (or whatever your real NIC is named
-  in `ipconfig`) to bypass virtual interfaces (Hyper-V, VPN tunnels,
-  Docker Desktop bridges) that claim multicast capability without
-  delivering.
-
-Windows binaries are not yet code-signed; SmartScreen will warn on
-first run, with "More info" → "Run anyway" through. Code signing for
-Windows is on the roadmap.
+Requires Go 1.25 or newer. ffmpeg is only required if you regenerate
+the embedded test-tone matrix (`make gen-tones`); the matrix is
+committed to the repo.
 
 [rel]: https://gitlab.com/dunn.dev/tutti/-/releases
+[contribute]: https://tutti.dunn.dev/contribute/
 
 ## Quickstart
 
@@ -165,8 +174,9 @@ tutti validate ./capture-2026-05-09T143022Z-myhost
 `tutti capture` does not touch any device. It listens for SSDP/mDNS
 announcements, fetches device descriptors, and runs library-decision
 analysis. Adding `--drive` does the AVTransport probe against
-discovered UPnP renderers, fetching test tones from
-`tutti.dunn.dev/audio/`.
+discovered UPnP renderers, serving test tones from a transient local
+HTTP server tutti spins up on a random port (the tones are embedded
+in the binary; no network round-trip required).
 
 `--drive` calls `GetTransportInfo` once before any tones run. If the
 device is `PLAYING` something at that moment, tutti refuses and
@@ -482,38 +492,53 @@ $ tutti capture --drive
 Error: descriptor fetch failed for eversolo-dmp-a6 after 3 attempts
 (http://<DEVICE_IP>:1054/description.xml: connection refused).
 Suggested next step: confirm the device is on (its UDN was advertised
-2 seconds ago) and re-run. If the device is reachable but tutti can't
-reach it, see `tutti doctor`.
+2 seconds ago) and re-run. If the device is reachable but tutti
+can't reach it, check the firewall on the host running tutti, or
+pass `--interface <name>` to scan a specific NIC.
 ```
 
 Network operations retry up to three times with exponential backoff
 and then bail with a prescriptive error. Library decision calls do not
 retry; they are deterministic against a fetched descriptor.
 
+## Site
+
+[tutti.dunn.dev][site] is the public corpus. Three things live there:
+
+- [`/learn/`][learn]: long-form references — UPnP/DLNA protocols
+  end to end, why streaming is finicky in practice, and an
+  implementations catalog of 35 renderer stacks, libraries, clients,
+  and bridges.
+- [`/devices/`][devices]: every profiled device, with library
+  decisions, format-support summary, drive transcripts, and capture
+  history. Each device's page progressively discloses raw evidence.
+- [`/contribute/`][contribute]: the per-OS install + capture +
+  validate + submit walkthrough. Two submission paths (MR or issue),
+  templates linked.
+
+[learn]: https://tutti.dunn.dev/learn/
+[devices]: https://tutti.dunn.dev/devices/
+
 ## Status
 
-Versioned per [SemVer](https://semver.org/). The schema is independent
-of the binary version and bumped only on breaking change.
+Versioned per [SemVer](https://semver.org/). Schema is independent of
+the binary version and bumps only on breaking change.
 
-The table below is generated from [`status.yaml`](status.yaml) at
-release time. Edit the YAML; the README is rewritten by CI.
-
-<!-- status:begin -->
 | Item | State |
 |---|---|
 | SSDP discovery | shipped |
 | mDNS discovery | shipped |
 | UPnP descriptor parse | shipped |
-| go-upnpcast decision trace | shipped |
-| huin/goupnp decision trace | shipped |
+| go-upnpcast decision trace | shipped (reimpl) |
+| huin/goupnp decision trace | shipped (reimpl) |
 | GetProtocolInfo capture | shipped |
 | Drive test (UPnP AVTransport) | shipped |
+| Real library invocation (vs reimpl) | not started |
 | AirPlay drive | not started |
 | Chromecast drive | not started |
-<!-- status:end -->
 
-Platforms with binaries: macOS arm64/amd64, Linux arm64/amd64, Windows
-amd64. Source builds anywhere Go 1.24+ runs.
+Platforms with signed binaries: linux/amd64, linux/arm64, darwin/arm64,
+windows/amd64. Source builds anywhere Go 1.25+ runs.
 
 ## Reference impl
 
