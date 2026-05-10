@@ -1,0 +1,19 @@
+# tutti corpus site — Cloudflare Worker with Static Assets.
+#
+# Replaces the previous Pages project (tutti-dunn-dev). The static
+# build output sits in dist/; wrangler ships it as the worker's
+# bound assets and the worker has no script entry, so requests
+# resolve to assets directly.
+#
+# Custom domain (tutti.dunn.dev) is bound to this worker via the
+# Cloudflare dashboard after the first successful deploy. Web
+# Analytics is enabled per-domain in the dashboard, the token is
+# stored as a per-project CI variable, and the catalog component
+# injects the beacon into every HTML file at build time.
+
+name = "tutti"
+compatibility_date = "2026-05-10"
+
+[assets]
+directory = "./dist"
+not_found_handling = "404-page"

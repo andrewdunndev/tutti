@@ -1,4 +1,4 @@
-# tutti CI: dunn.dev/pipeline catalog @2.1.1.
+# tutti CI: dunn.dev/pipeline catalog @2.1.2.
 #
 # v2.0.0 contract: every component image resolves to ci-go:$[[
 # component.version ]], so pinning the catalog at one tag pins the
@@ -28,11 +28,11 @@ variables:
 
 include:
   # Lint: golangci-lint via the catalog's pinned ci-go. Real gate.
-  - component: gitlab.com/dunn.dev/pipeline/go-lint@2.1.1
+  - component: gitlab.com/dunn.dev/pipeline/go-lint@2.1.2
 
   # Audit: govulncheck on every push. allow_failure by default
   # (vuln-DB shifts shouldn't block a release).
-  - component: gitlab.com/dunn.dev/pipeline/go-audit@2.1.1
+  - component: gitlab.com/dunn.dev/pipeline/go-audit@2.1.2
 
   # Branch verification: parallel:matrix cross-compile on every
   # push. ldflags overridden so the binary's version package gets
@@ -41,7 +41,7 @@ include:
   # internal/version so the manifest writer can read it). Matrix
   # is overridden below to add windows/amd64 to the catalog's
   # default linux+darwin set.
-  - component: gitlab.com/dunn.dev/pipeline/go-build@2.1.1
+  - component: gitlab.com/dunn.dev/pipeline/go-build@2.1.2
     inputs:
       binary_name: tutti
       package_path: ./cmd/tutti
@@ -51,7 +51,7 @@ include:
   # signature + per-binary .sha256 + upload to package registry.
   # Same ldflags override target as go-build, with $CI_COMMIT_TAG
   # so the released binary stamps the tag itself.
-  - component: gitlab.com/dunn.dev/pipeline/go-release-binary@2.1.1
+  - component: gitlab.com/dunn.dev/pipeline/go-release-binary@2.1.2
     inputs:
       binary_name: tutti
       package_path: ./cmd/tutti
@@ -59,32 +59,36 @@ include:
       ldflags: '-s -w -X gitlab.com/dunn.dev/tutti/internal/version.Tutti=$CI_COMMIT_TAG'
 
   # Tag-only: CycloneDX SBOM per binary via syft.
-  - component: gitlab.com/dunn.dev/pipeline/go-sbom@2.1.1
+  - component: gitlab.com/dunn.dev/pipeline/go-sbom@2.1.2
     inputs:
       package_name: tutti
 
   # Tag-only: SLSA v1.0 provenance per binary, cosign-signed via
   # GitLab OIDC keyless.
-  - component: gitlab.com/dunn.dev/pipeline/slsa-attest@2.1.1
+  - component: gitlab.com/dunn.dev/pipeline/slsa-attest@2.1.2
 
   # Tag-only: GitLab Release with binaries + SBOMs + attestations
   # linked. Idempotent across pipeline reruns.
-  - component: gitlab.com/dunn.dev/pipeline/release-create@2.1.1
+  - component: gitlab.com/dunn.dev/pipeline/release-create@2.1.2
     inputs:
       package_name: tutti
 
   # Site: build + deploy the Astro corpus site at web/ to Cloudflare
-  # Pages. Build job runs on every push (so MR previews work);
-  # deploy job runs only on main. needs_npm_install: false because
-  # the catalog's default `npm ci` runs at consumer root and we have
-  # no package.json there — tutti's npm context is the web/ subdir,
-  # so we cd there inside the build_command.
-  - component: gitlab.com/dunn.dev/pipeline/cloudflare-pages@2.1.1
+  # Workers (with Static Assets). Wrangler config lives in web/; the
+  # build runs there too so output_dir sits next to wrangler.toml as
+  # `dist/`. Build job runs on every push + MR; deploy job runs only
+  # on main. WEB_ANALYTICS_TOKEN_TUTTI is a per-project CI variable
+  # holding the Cloudflare Web Analytics beacon token; when present,
+  # the build step injects the beacon into every .html file under
+  # dist/ before deploy.
+  - component: gitlab.com/dunn.dev/pipeline/cloudflare-worker@2.1.2
     inputs:
-      cloudflare_project: tutti-dunn-dev
-      build_command: 'cd web && npm ci && npm run build'
+      wrangler_config: web/wrangler.toml
+      build_command: npm run build
       output_dir: web/dist
-      needs_npm_install: false
+      needs_npm_install: true
+      npm_dir: web
+      web_analytics_token: $WEB_ANALYTICS_TOKEN_TUTTI
       production_url: https://tutti.dunn.dev
 
 # Matrix overrides on the catalog jobs. Catalog default is
@@ -123,7 +127,7 @@ package:
 # edits one and forgets to mirror.
 schema-sync:
   stage: lint
-  image: registry.gitlab.com/dunn.dev/pipeline/ci-go:2.1.1
+  image: registry.gitlab.com/dunn.dev/pipeline/ci-go:2.1.2
   script:
     - |
       if ! cmp -s schema/manifest.v1.json internal/schema/manifest.v1.json; then
@@ -142,7 +146,7 @@ schema-sync:
 # until a go-test catalog component lands.
 test:
   stage: test
-  image: registry.gitlab.com/dunn.dev/pipeline/ci-go:2.1.1
+  image: registry.gitlab.com/dunn.dev/pipeline/ci-go:2.1.2
   variables:
     CGO_ENABLED: "1"
     GOMODCACHE: $CI_PROJECT_DIR/.gomodcache
