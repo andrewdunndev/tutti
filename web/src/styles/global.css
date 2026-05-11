@@ -48,7 +48,8 @@ code:not(pre code) {
   padding: var(--space-4) var(--space-5);
   display: flex;
   align-items: center;
-  gap: var(--space-5);
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-5);
 }
 .brand {
   font-family: var(--font-mono);
@@ -61,7 +62,8 @@ code:not(pre code) {
 .site-nav {
   margin-left: auto;
   display: flex;
-  gap: var(--space-4);
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
   font-family: var(--font-mono);
   font-size: var(--text-sm);
   letter-spacing: 0.04em;
@@ -94,8 +96,9 @@ main.page {
   max-width: 1180px;
   margin: 0 auto;
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
-  gap: var(--space-4);
+  gap: var(--space-1) var(--space-4);
 }
 
 /* common page header */
@@ -245,4 +248,50 @@ dl.kv dd {
   margin: 0;
   color: var(--text);
   word-break: break-word;
+}
+
+/* Narrow viewports: brand + nav stack into rows, tables scroll
+   horizontally instead of overflowing the page, page padding is
+   trimmed so content gets every available pixel. */
+@media (max-width: 640px) {
+  .site-header-inner {
+    padding: var(--space-3) var(--space-4);
+    gap: var(--space-2);
+  }
+  .site-nav {
+    /* Push the nav off the brand row so it wraps to its own line at
+       the start, instead of right-aligning into clipped territory. */
+    margin-left: 0;
+    width: 100%;
+    gap: var(--space-2) var(--space-3);
+  }
+  main.page {
+    padding: var(--space-5) var(--space-4);
+  }
+  .site-footer {
+    padding: var(--space-3) var(--space-4);
+  }
+  /* Data tables can have 7+ columns (drive runs). At narrow widths
+     turn them into a horizontal-scroll strip rather than letting them
+     extend past the viewport's right edge silently. */
+  table.data {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+  table.data th, table.data td {
+    padding: var(--space-2);
+  }
+  dl.kv {
+    /* dt + dd side-by-side cramps badly at 375px; stack them. */
+    grid-template-columns: 1fr;
+    gap: var(--space-0) var(--space-2);
+  }
+  dl.kv dt {
+    margin-top: var(--space-2);
+  }
+  dl.kv dt:first-of-type {
+    margin-top: 0;
+  }
 }
