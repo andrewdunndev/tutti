@@ -19,6 +19,51 @@ UPnP (Universal Plug and Play) Device Architecture (UPnP-DA) defines three parti
 - **Service**: the atomic capability unit. Each service has a type URN, a control URL (SOAP endpoint), an event URL (GENA subscription endpoint), and a SCPD URL (the service's own XML description of its actions and state variables).
 - **Control Point**: a client that discovers devices via SSDP, fetches their descriptors, and issues SOAP calls against service control URLs.
 
+<div class="cat-explainer">
+<svg viewBox="0 0 720 220" role="img" aria-label="The three UPnP participant roles. A control point on the left issues three kinds of request against a device on the right: M-SEARCH to discover, GET to fetch the descriptor, and SOAP to call an action on one of the device's services (AVTransport, RenderingControl, ConnectionManager).">
+  <rect x="20" y="20" width="680" height="180" fill="#ffffff" stroke="#e0e0e0" stroke-width="1" rx="3"/>
+  <text x="40" y="46" font-family="IBM Plex Mono, monospace" font-size="10" font-weight="700" fill="#707070" letter-spacing="1.4">UPNP ROLES</text>
+
+  <rect x="40" y="76" width="150" height="104" rx="3" fill="#f4f4f4" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="115" y="100" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="700" fill="#707070" letter-spacing="1.2">ROLE</text>
+  <text x="115" y="124" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="13" font-weight="700" fill="#0a0a0a">Control Point</text>
+  <text x="115" y="146" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="#707070">music client</text>
+  <text x="115" y="162" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="#707070">or library</text>
+
+  <line x1="190" y1="100" x2="282" y2="100" stroke="#4a6741" stroke-width="2"/>
+  <polygon points="282,100 272,95 272,105" fill="#4a6741"/>
+  <text x="236" y="93" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" fill="#404040">M-SEARCH</text>
+
+  <line x1="190" y1="128" x2="282" y2="128" stroke="#4a6741" stroke-width="2"/>
+  <polygon points="282,128 272,123 272,133" fill="#4a6741"/>
+  <text x="236" y="122" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" fill="#404040">GET descriptor</text>
+
+  <line x1="190" y1="156" x2="282" y2="156" stroke="#4a6741" stroke-width="2"/>
+  <polygon points="282,156 272,151 272,161" fill="#4a6741"/>
+  <text x="236" y="150" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" fill="#404040">SOAP action</text>
+
+  <rect x="282" y="76" width="398" height="104" rx="3" fill="#ffffff" stroke="#4a6741" stroke-width="2"/>
+  <text x="296" y="94" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="700" fill="#4a6741" letter-spacing="1.2">DEVICE  ·  uuid:...  ·  http://192.168.1.42/description.xml</text>
+
+  <rect x="296" y="104" width="120" height="68" rx="2" fill="#f4f4f4" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="356" y="122" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="8" font-weight="700" fill="#707070" letter-spacing="1.2">SERVICE</text>
+  <text x="356" y="142" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" font-weight="600" fill="#0a0a0a">AVTransport</text>
+  <text x="356" y="158" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9" fill="#707070">play / stop / seek</text>
+
+  <rect x="421" y="104" width="120" height="68" rx="2" fill="#f4f4f4" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="481" y="122" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="8" font-weight="700" fill="#707070" letter-spacing="1.2">SERVICE</text>
+  <text x="481" y="142" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" font-weight="600" fill="#0a0a0a">RenderingControl</text>
+  <text x="481" y="158" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9" fill="#707070">volume / mute</text>
+
+  <rect x="546" y="104" width="120" height="68" rx="2" fill="#f4f4f4" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="606" y="122" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="8" font-weight="700" fill="#707070" letter-spacing="1.2">SERVICE</text>
+  <text x="606" y="142" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" font-weight="600" fill="#0a0a0a">ConnectionManager</text>
+  <text x="606" y="158" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9" fill="#707070">protocol info</text>
+</svg>
+
+Every UPnP interaction is some combination of these three calls: <em>find me devices</em>, <em>tell me about yourself</em>, <em>do this thing</em>. SSDP handles the first, HTTP the second, SOAP the third. The rest of this document is detail under each of those three.
+</div>
+
 ### Hierarchical Device Model
 
 Devices compose hierarchically. A *root device* is the top of the tree; it may contain zero or more *embedded devices*, each of which may have its own services. The root device descriptor XML enumerates all embedded devices inline. In practice, a standalone MediaRenderer (the type tutti targets) is usually a root device with no embedded devices, carrying three services directly: AVTransport, RenderingControl, and ConnectionManager.
@@ -75,6 +120,48 @@ CONFIGID.UPNP.ORG: 42\r\n
 ```
 
 `LOCATION` is the URL for the device descriptor. `USN` (Unique Service Name) is the stable per-(device, role) identifier: a UUID plus `::` plus the ST URN. `EXT` is a required empty header in responses to M-SEARCH.
+
+<div class="cat-explainer">
+<svg viewBox="0 0 720 260" role="img" aria-label="SSDP M-SEARCH wire flow. The control point sends one M-SEARCH packet to the multicast group 239.255.255.250 on UDP port 1900. Every device on the LAN that matches the search target replies unicast back to the control point's ephemeral source port.">
+  <rect x="20" y="20" width="680" height="220" fill="#ffffff" stroke="#e0e0e0" stroke-width="1" rx="3"/>
+  <text x="40" y="46" font-family="IBM Plex Mono, monospace" font-size="10" font-weight="700" fill="#707070" letter-spacing="1.4">SSDP M-SEARCH FLOW</text>
+
+  <rect x="280" y="64" width="160" height="50" rx="3" fill="#ffffff" stroke="#4a6741" stroke-width="2"/>
+  <text x="360" y="84" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="700" fill="#4a6741" letter-spacing="1.2">CONTROL POINT</text>
+  <text x="360" y="104" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" fill="#0a0a0a">music client</text>
+
+  <line x1="360" y1="114" x2="360" y2="148" stroke="#4a6741" stroke-width="2"/>
+  <polygon points="360,148 355,138 365,138" fill="#4a6741"/>
+  <text x="372" y="135" font-family="IBM Plex Mono, monospace" font-size="9" fill="#404040">M-SEARCH</text>
+
+  <line x1="60" y1="158" x2="660" y2="158" stroke="#707070" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="360" y="173" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="700" fill="#707070" letter-spacing="1.2">MULTICAST  239.255.255.250 : UDP 1900</text>
+
+  <rect x="60" y="184" width="150" height="48" rx="3" fill="#f4f4f4" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="135" y="202" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="8" font-weight="700" fill="#707070" letter-spacing="1.2">DEVICE</text>
+  <text x="135" y="220" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="#0a0a0a">MediaRenderer</text>
+
+  <rect x="285" y="184" width="150" height="48" rx="3" fill="#f4f4f4" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="360" y="202" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="8" font-weight="700" fill="#707070" letter-spacing="1.2">DEVICE</text>
+  <text x="360" y="220" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="#0a0a0a">MediaServer</text>
+
+  <rect x="510" y="184" width="150" height="48" rx="3" fill="#f4f4f4" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="585" y="202" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="8" font-weight="700" fill="#707070" letter-spacing="1.2">DEVICE</text>
+  <text x="585" y="220" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="#0a0a0a">Printer</text>
+
+  <line x1="135" y1="184" x2="135" y2="166" stroke="#707070" stroke-width="1.5" stroke-dasharray="3,2"/>
+  <line x1="135" y1="166" x2="288" y2="114" stroke="#707070" stroke-width="1.5" stroke-dasharray="3,2"/>
+  <polygon points="288,114 293,123 283,124" fill="#707070"/>
+
+  <line x1="360" y1="184" x2="360" y2="166" stroke="#707070" stroke-width="1.5" stroke-dasharray="3,2"/>
+  <line x1="360" y1="166" x2="360" y2="114" stroke="#707070" stroke-width="1.5" stroke-dasharray="3,2"/>
+  <polygon points="360,114 354,123 366,123" fill="#707070"/>
+  <text x="510" y="135" font-family="IBM Plex Mono, monospace" font-size="9" fill="#707070">unicast 200 OK</text>
+  <text x="510" y="148" font-family="IBM Plex Mono, monospace" font-size="9" fill="#707070">replies</text>
+</svg>
+
+The M-SEARCH goes out once. The replies come back <em>unicast</em>, each device speaking to the control point's ephemeral source port directly. A printer is on the bus and hears the same packet; if the ST didn't match its type, it stays silent. Devices randomise their reply within <code>[0, MX]</code> seconds so a hundred-device LAN doesn't burst-reply in the same microsecond.
+</div>
 
 ### NOTIFY
 
@@ -354,11 +441,60 @@ AVTransport (defined in the UPnP AV AVTransport service specification) is the se
 
 The transport state variable `TransportState` progresses through:
 
-```
-STOPPED ──SetAVTransportURI+Play──> TRANSITIONING ──(buffered)──> PLAYING
-   ^                                                                   |
-   └────────────────────Stop/EOS────────────────────────────────────┘
-```
+<div class="cat-explainer">
+<svg viewBox="0 0 720 240" role="img" aria-label="AVTransport state machine. Five states: NO_MEDIA_PRESENT, STOPPED, TRANSITIONING, PLAYING, PAUSED_PLAYBACK. Setting a URI moves a device out of NO_MEDIA_PRESENT to STOPPED. Play moves it to TRANSITIONING while buffering, then PLAYING. Stop or end-of-stream return it to STOPPED. Pause toggles between PLAYING and PAUSED_PLAYBACK.">
+  <rect x="20" y="20" width="680" height="200" fill="#ffffff" stroke="#e0e0e0" stroke-width="1" rx="3"/>
+  <text x="40" y="46" font-family="IBM Plex Mono, monospace" font-size="10" font-weight="700" fill="#707070" letter-spacing="1.4">AVTRANSPORT STATE MACHINE</text>
+
+  <rect x="40" y="74" width="120" height="56" rx="3" fill="#f4f4f4" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="100" y="96" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" font-weight="700" fill="#0a0a0a">NO_MEDIA</text>
+  <text x="100" y="110" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" font-weight="700" fill="#0a0a0a">_PRESENT</text>
+  <text x="100" y="124" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9" fill="#707070">no URI set</text>
+
+  <line x1="160" y1="102" x2="220" y2="102" stroke="#4a6741" stroke-width="2"/>
+  <polygon points="220,102 210,97 210,107" fill="#4a6741"/>
+  <text x="190" y="95" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" fill="#404040">SetURI</text>
+
+  <rect x="220" y="74" width="120" height="56" rx="3" fill="#ffffff" stroke="#4a6741" stroke-width="2"/>
+  <text x="280" y="100" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" font-weight="700" fill="#4a6741">STOPPED</text>
+  <text x="280" y="118" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9" fill="#707070">safe to set URI</text>
+
+  <line x1="340" y1="102" x2="400" y2="102" stroke="#4a6741" stroke-width="2"/>
+  <polygon points="400,102 390,97 390,107" fill="#4a6741"/>
+  <text x="370" y="95" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" fill="#404040">Play</text>
+
+  <rect x="400" y="74" width="120" height="56" rx="3" fill="#ffffff" stroke="#4a6741" stroke-width="2"/>
+  <text x="460" y="98" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" font-weight="700" fill="#4a6741">TRANSI-</text>
+  <text x="460" y="112" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" font-weight="700" fill="#4a6741">TIONING</text>
+  <text x="460" y="124" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9" fill="#707070">buffering</text>
+
+  <line x1="520" y1="102" x2="580" y2="102" stroke="#4a6741" stroke-width="2"/>
+  <polygon points="580,102 570,97 570,107" fill="#4a6741"/>
+  <text x="550" y="95" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" fill="#404040">buffered</text>
+
+  <rect x="580" y="74" width="100" height="56" rx="3" fill="#ffffff" stroke="#4a6741" stroke-width="2"/>
+  <text x="630" y="100" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" font-weight="700" fill="#4a6741">PLAYING</text>
+  <text x="630" y="118" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9" fill="#707070">active</text>
+
+  <rect x="580" y="160" width="100" height="40" rx="3" fill="#f4f4f4" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="630" y="178" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="700" fill="#0a0a0a">PAUSED_</text>
+  <text x="630" y="192" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="700" fill="#0a0a0a">PLAYBACK</text>
+
+  <line x1="618" y1="130" x2="618" y2="158" stroke="#4a6741" stroke-width="2"/>
+  <polygon points="618,158 613,148 623,148" fill="#4a6741"/>
+  <text x="608" y="148" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="9" fill="#404040">Pause</text>
+
+  <line x1="642" y1="160" x2="642" y2="132" stroke="#4a6741" stroke-width="2"/>
+  <polygon points="642,132 637,142 647,142" fill="#4a6741"/>
+  <text x="652" y="148" font-family="IBM Plex Mono, monospace" font-size="9" fill="#404040">Play</text>
+
+  <path d="M 580 130 L 580 212 L 340 212 L 340 130" fill="none" stroke="#4a6741" stroke-width="2"/>
+  <polygon points="340,130 335,140 345,140" fill="#4a6741"/>
+  <text x="460" y="208" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" fill="#404040">Stop / end of stream</text>
+</svg>
+
+The state machine is the same on every conforming renderer, but the <em>timing</em> isn't: <code>TRANSITIONING</code> can be a millisecond on a Sonos with a small MP3 or several seconds on a slow streamer fetching a large FLAC header. tutti polls <code>GetTransportInfo</code> through this transition so the capture records whatever the device did, however long it took.
+</div>
 
 States:
 - `STOPPED`: No active playback. Safe to issue SetAVTransportURI.

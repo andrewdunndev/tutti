@@ -75,13 +75,9 @@ function contributorUrl(c: string): string {
     <p class="page-eyebrow">{device.vendor ?? '—'}{device.meta?.discontinued && <span class="discontinued"> · discontinued</span>}</p>
     <h1 class="page-title">{device.model ?? device.slug}</h1>
 
-    {device.meta?.links && Object.keys(device.meta.links).length > 0 && (
-      <nav class="hero-links" aria-label="Manufacturer links">
-        {device.meta.links.manufacturer && <a href={device.meta.links.manufacturer} target="_blank" rel="noopener"><i class="ph-duotone ph-buildings" aria-hidden="true"></i>manufacturer</a>}
-        {device.meta.links.support      && <a href={device.meta.links.support}      target="_blank" rel="noopener"><i class="ph-duotone ph-lifebuoy" aria-hidden="true"></i>support</a>}
-        {device.meta.links.firmware     && <a href={device.meta.links.firmware}     target="_blank" rel="noopener"><i class="ph-duotone ph-download-simple" aria-hidden="true"></i>firmware</a>}
-        {device.meta.links.manual       && <a href={device.meta.links.manual}       target="_blank" rel="noopener"><i class="ph-duotone ph-book-open" aria-hidden="true"></i>manual</a>}
-        {device.meta.links.purchase     && <a href={device.meta.links.purchase}     target="_blank" rel="noopener"><i class="ph-duotone ph-shopping-cart" aria-hidden="true"></i>purchase</a>}
+    {device.meta?.links?.manufacturer && (
+      <nav class="hero-links" aria-label="Manufacturer link">
+        <a href={device.meta.links.manufacturer} target="_blank" rel="noopener"><i class="ph-duotone ph-buildings" aria-hidden="true"></i>manufacturer</a>
       </nav>
     )}
 

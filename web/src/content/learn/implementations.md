@@ -8,6 +8,47 @@ order: 3
 
 Reference for tutti renderer profiling: "what's the device built on / what library does this client use / where to look for source-of-truth behavior."
 
+<div class="cat-explainer">
+<svg viewBox="0 0 720 220" role="img" aria-label="The four categories of code involved in a UPnP audio stream. A renderer-side stack lives inside the playback device and accepts SOAP. A control-point library lives inside the client app and issues SOAP. An end-user client is the app the listener actually touches. A bridge or server transmutes content from a non-UPnP source into something the renderer can play.">
+  <rect x="20" y="20" width="680" height="180" fill="#ffffff" stroke="#e0e0e0" stroke-width="1" rx="3"/>
+  <text x="40" y="46" font-family="IBM Plex Mono, monospace" font-size="10" font-weight="700" fill="#707070" letter-spacing="1.4">FOUR CATEGORIES OF CODE IN A UPNP STREAM</text>
+
+  <rect x="40" y="68" width="144" height="116" rx="3" fill="#ffffff" stroke="#4a6741" stroke-width="2"/>
+  <text x="112" y="86" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="8" font-weight="700" fill="#4a6741" letter-spacing="1.2">CATEGORY 1</text>
+  <text x="112" y="106" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="12" font-weight="700" fill="#0a0a0a">renderer stack</text>
+  <text x="112" y="126" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="#404040">inside the device</text>
+  <text x="112" y="140" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="#404040">answers SOAP</text>
+  <text x="112" y="166" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" fill="#707070" letter-spacing="0.6">Platinum, Sonos</text>
+  <text x="112" y="178" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" fill="#707070" letter-spacing="0.6">jUPnP, AirPlay</text>
+
+  <rect x="198" y="68" width="144" height="116" rx="3" fill="#ffffff" stroke="#4a6741" stroke-width="2"/>
+  <text x="270" y="86" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="8" font-weight="700" fill="#4a6741" letter-spacing="1.2">CATEGORY 2</text>
+  <text x="270" y="106" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="12" font-weight="700" fill="#0a0a0a">control-point lib</text>
+  <text x="270" y="126" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="#404040">inside the client app</text>
+  <text x="270" y="140" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="#404040">issues SOAP</text>
+  <text x="270" y="166" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" fill="#707070" letter-spacing="0.6">go-upnpcast,</text>
+  <text x="270" y="178" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" fill="#707070" letter-spacing="0.6">JUPnP, Cling</text>
+
+  <rect x="356" y="68" width="144" height="116" rx="3" fill="#ffffff" stroke="#4a6741" stroke-width="2"/>
+  <text x="428" y="86" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="8" font-weight="700" fill="#4a6741" letter-spacing="1.2">CATEGORY 3</text>
+  <text x="428" y="106" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="12" font-weight="700" fill="#0a0a0a">end-user client</text>
+  <text x="428" y="126" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="#404040">the app the user</text>
+  <text x="428" y="140" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="#404040">actually touches</text>
+  <text x="428" y="166" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" fill="#707070" letter-spacing="0.6">Symfonium,</text>
+  <text x="428" y="178" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" fill="#707070" letter-spacing="0.6">BubbleUPnP</text>
+
+  <rect x="514" y="68" width="144" height="116" rx="3" fill="#ffffff" stroke="#4a6741" stroke-width="2"/>
+  <text x="586" y="86" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="8" font-weight="700" fill="#4a6741" letter-spacing="1.2">CATEGORY 4</text>
+  <text x="586" y="106" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="12" font-weight="700" fill="#0a0a0a">bridge / server</text>
+  <text x="586" y="126" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="#404040">re-serves content as</text>
+  <text x="586" y="140" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="#404040">a UPnP source</text>
+  <text x="586" y="166" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" fill="#707070" letter-spacing="0.6">Plex DLNA,</text>
+  <text x="586" y="178" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" fill="#707070" letter-spacing="0.6">upmpdcli, MiniDLNA</text>
+</svg>
+
+When a bug shows up <em>only</em> in a particular app, the question is which of the four categories it lives in. A descriptor that fails to parse points at category 2 (the control-point library inside the client). A device that <em>accepts</em> a stream but then plays it wrong points at category 1 (the renderer stack). Different categories, different fixes, different upstreams.
+</div>
+
 ---
 
 ## Renderer-side stacks

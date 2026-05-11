@@ -8,6 +8,58 @@ order: 2
 
 This document explains the failure modes behind the most common user complaint: "my renderer shows up in app X but not app Y" or "format X plays in Sonos but not in Subsonic." It assumes familiarity with UPnP/DLNA protocol basics (see `01-protocols.md`).
 
+<div class="cat-explainer">
+<svg viewBox="0 0 720 240" role="img" aria-label="One device descriptor handed to three different control-point libraries can produce three different verdicts: one library accepts the device, two reject it, each for a different reason. This is the failure mode behind 'works in app X, not in app Y'.">
+  <rect x="20" y="20" width="680" height="200" fill="#ffffff" stroke="#e0e0e0" stroke-width="1" rx="3"/>
+  <text x="40" y="46" font-family="IBM Plex Mono, monospace" font-size="10" font-weight="700" fill="#707070" letter-spacing="1.4">PARSER VARIANCE</text>
+
+  <rect x="40" y="92" width="150" height="68" rx="3" fill="#ffffff" stroke="#4a6741" stroke-width="2"/>
+  <text x="115" y="112" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="700" fill="#4a6741" letter-spacing="1.2">ONE DESCRIPTOR</text>
+  <text x="115" y="132" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" font-weight="600" fill="#0a0a0a">device.xml</text>
+  <text x="115" y="148" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9" fill="#707070">same bytes, every time</text>
+
+  <line x1="190" y1="100" x2="260" y2="80" stroke="#4a6741" stroke-width="2"/>
+  <polygon points="260,80 250,80 254,90" fill="#4a6741"/>
+  <line x1="190" y1="126" x2="260" y2="126" stroke="#4a6741" stroke-width="2"/>
+  <polygon points="260,126 250,121 250,131" fill="#4a6741"/>
+  <line x1="190" y1="152" x2="260" y2="172" stroke="#4a6741" stroke-width="2"/>
+  <polygon points="260,172 250,162 254,172" fill="#4a6741"/>
+
+  <rect x="260" y="64" width="180" height="36" rx="2" fill="#f4f4f4" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="276" y="80" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="700" fill="#707070" letter-spacing="1.2">LIBRARY A</text>
+  <text x="276" y="93" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="#404040">substring match on deviceType</text>
+
+  <rect x="260" y="110" width="180" height="36" rx="2" fill="#f4f4f4" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="276" y="126" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="700" fill="#707070" letter-spacing="1.2">LIBRARY B</text>
+  <text x="276" y="139" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="#404040">strict XML, namespace-aware</text>
+
+  <rect x="260" y="156" width="180" height="36" rx="2" fill="#f4f4f4" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="276" y="172" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="700" fill="#707070" letter-spacing="1.2">LIBRARY C</text>
+  <text x="276" y="185" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="#404040">requires exact deviceType URN</text>
+
+  <line x1="440" y1="82" x2="500" y2="82" stroke="#4a6741" stroke-width="2"/>
+  <polygon points="500,82 490,77 490,87" fill="#4a6741"/>
+  <line x1="440" y1="128" x2="500" y2="128" stroke="#707070" stroke-width="2"/>
+  <polygon points="500,128 490,123 490,133" fill="#707070"/>
+  <line x1="440" y1="174" x2="500" y2="174" stroke="#707070" stroke-width="2"/>
+  <polygon points="500,174 490,169 490,179" fill="#707070"/>
+
+  <rect x="500" y="64" width="160" height="36" rx="2" fill="#ffffff" stroke="#4a6741" stroke-width="2"/>
+  <text x="580" y="79" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" font-weight="700" fill="#4a6741" letter-spacing="1.2">ACCEPTED</text>
+  <text x="580" y="93" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9" fill="#707070">deviceType match found</text>
+
+  <rect x="500" y="110" width="160" height="36" rx="2" fill="#ffffff" stroke="#707070" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <text x="580" y="125" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" font-weight="700" fill="#707070" letter-spacing="1.2">REJECTED</text>
+  <text x="580" y="139" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9" fill="#404040">missing xmlns on child element</text>
+
+  <rect x="500" y="156" width="160" height="36" rx="2" fill="#ffffff" stroke="#707070" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <text x="580" y="171" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" font-weight="700" fill="#707070" letter-spacing="1.2">REJECTED</text>
+  <text x="580" y="185" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9" fill="#404040">non-standard deviceType suffix</text>
+</svg>
+
+The spec lets a device emit XML that's technically conforming but that strict parsers will reject. Different libraries enforce different rules, so the <em>same</em> wire bytes produce <em>different</em> verdicts. That's why "this device shows up in BubbleUPnP but not in Symfonium" is almost always a parser disagreement, not a network issue. tutti's job is to reproduce each library's verdict and name the rule it tripped over.
+</div>
+
 ---
 
 ## The Spec Is Permissive Enough to Bite People
