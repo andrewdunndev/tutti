@@ -33,8 +33,16 @@ const notesById = import.meta.glob<string>(
   '../../../../evidence/*/captures/*/notes.md',
   { eager: true, query: '?raw', import: 'default' },
 );
-const headlineCaptureKey = device.latest.id.replace(/\/manifest$/, '');
-const notesPath = Object.keys(notesById).find(k => k.includes(`/${headlineCaptureKey}/`));
+// Astro lowercases content-collection IDs, which loses case on capture
+// directories named with ISO timestamps (uppercase T/Z). Reach for the
+// raw filePath instead so GitLab links and the notes lookup hit the
+// real on-disk paths.
+const filePath = (device.latest as { filePath?: string }).filePath ?? '';
+const evidenceRel = filePath
+  .replace(/^.*?(evidence\/)/, '$1')
+  .replace(/\/manifest\.json$/, '');
+const captureRel = evidenceRel.replace(/^evidence\//, '');
+const notesPath = Object.keys(notesById).find(k => k.includes(`/${captureRel}/`));
 const notesRaw = notesPath ? notesById[notesPath] : null;
 
 // Format-support summary: collapse drive runs into per-MIME outcomes.
@@ -51,8 +59,9 @@ const formatRows = proto
   ? Object.entries(proto.format_matches).map(([k, v]) => ({ family: k, count: v }))
   : [];
 
-// Source link helpers — files live in the GitLab repo at this path.
-const srcBase = `https://gitlab.com/dunn.dev/tutti/-/blob/main/evidence/${device.slug}/captures/${headlineCaptureKey.split('/').pop()}`;
+// Source link helpers -- files live in the GitLab repo at this path.
+// evidenceRel preserves the on-disk casing of the capture dir.
+const srcBase = `https://gitlab.com/dunn.dev/tutti/-/blob/main/${evidenceRel}`;
 const linkTo = (relPath: string) => `${srcBase}/${relPath}`;
 
 function contributorUrl(c: string): string {
@@ -65,6 +74,17 @@ function contributorUrl(c: string): string {
   <header class="device-hero">
     <p class="page-eyebrow">{device.vendor ?? '—'}{device.meta?.discontinued && <span class="discontinued"> · discontinued</span>}</p>
     <h1 class="page-title">{device.model ?? device.slug}</h1>
+
+    {device.meta?.links && Object.keys(device.meta.links).length > 0 && (
+      <nav class="hero-links" aria-label="Manufacturer links">
+        {device.meta.links.manufacturer && <a href={device.meta.links.manufacturer} target="_blank" rel="noopener"><i class="ph-duotone ph-buildings" aria-hidden="true"></i>manufacturer</a>}
+        {device.meta.links.support      && <a href={device.meta.links.support}      target="_blank" rel="noopener"><i class="ph-duotone ph-lifebuoy" aria-hidden="true"></i>support</a>}
+        {device.meta.links.firmware     && <a href={device.meta.links.firmware}     target="_blank" rel="noopener"><i class="ph-duotone ph-download-simple" aria-hidden="true"></i>firmware</a>}
+        {device.meta.links.manual       && <a href={device.meta.links.manual}       target="_blank" rel="noopener"><i class="ph-duotone ph-book-open" aria-hidden="true"></i>manual</a>}
+        {device.meta.links.purchase     && <a href={device.meta.links.purchase}     target="_blank" rel="noopener"><i class="ph-duotone ph-shopping-cart" aria-hidden="true"></i>purchase</a>}
+      </nav>
+    )}
+
     {device.meta?.tagline && (
       <p class="device-tagline">{device.meta.tagline}</p>
     )}
@@ -82,16 +102,6 @@ function contributorUrl(c: string): string {
       <span class:list={['tag', drv.tone === 'mute' ? '' : drv.tone]}>drive: {drv.label}</span>
       {head.tags?.map(t => <span class="tag">{t}</span>)}
     </div>
-
-    {device.meta?.links && Object.keys(device.meta.links).length > 0 && (
-      <nav class="hero-links" aria-label="Manufacturer links">
-        {device.meta.links.manufacturer && <a href={device.meta.links.manufacturer} target="_blank" rel="noopener">manufacturer →</a>}
-        {device.meta.links.support      && <a href={device.meta.links.support}      target="_blank" rel="noopener">support →</a>}
-        {device.meta.links.firmware     && <a href={device.meta.links.firmware}     target="_blank" rel="noopener">firmware →</a>}
-        {device.meta.links.manual       && <a href={device.meta.links.manual}       target="_blank" rel="noopener">manual →</a>}
-        {device.meta.links.purchase     && <a href={device.meta.links.purchase}     target="_blank" rel="noopener">purchase →</a>}
-      </nav>
-    )}
 
     {!device.meta && (
       <p class="meta-missing">
@@ -331,15 +341,42 @@ function contributorUrl(c: string): string {
   .device-meta .dlna { font-family: var(--font-mono); }
   .discontinued { color: var(--dd-status-warning); font-weight: 600; }
   .hero-pills { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: var(--space-3) 0; }
+  /* Match the .tag shape exactly (sharp corners, mono caps, tight
+     padding) so the link group reads as part of the same design
+     family as the discovery/drive tags above it. The Phosphor
+     duotone glyph at the start gives each link visual identity
+     without breaking the rectangular language. */
   .hero-links {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-4);
-    margin-top: var(--space-3);
-    font-family: var(--font-mono);
-    font-size: var(--text-sm);
+    gap: var(--space-2);
+    margin: var(--space-2) 0 var(--space-3) 0;
   }
-  .hero-links a { color: var(--accent); }
+  .hero-links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    padding: 0.05rem 0.4rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--bg);
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: border-color 120ms ease, color 120ms ease;
+  }
+  .hero-links a i {
+    font-size: 1.1em;
+    line-height: 1;
+  }
+  .hero-links a:hover,
+  .hero-links a:focus-visible {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
   .meta-missing {
     margin-top: var(--space-4);
     padding: var(--space-3);
