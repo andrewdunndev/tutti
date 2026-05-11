@@ -1,6 +1,6 @@
 {
   "device_type": "urn:schemas-upnp-org:device:MediaRenderer:1",
-  "friendly_name": "DMP-A6(livingroom)",
+  "friendly_name": "DMP-A6",
   "manufacturer": "EVERSOLO",
   "manufacturer_url": "http://www.eversolo.com",
   "model_description": "Plutinosoft AV Media Renderer Device",

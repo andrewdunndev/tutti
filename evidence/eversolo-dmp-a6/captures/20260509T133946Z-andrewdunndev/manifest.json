@@ -44,9 +44,9 @@
   ],
   "devices": [
     {
-      "slug": "eversolo-dmp-a6-livingroom",
+      "slug": "eversolo-dmp-a6",
       "vendor": "EVERSOLO",
-      "model": "DMP-A6(livingroom)",
+      "model": "DMP-A6",
       "udn": "uuid:800a805eef11-dmr",
       "tags": [
         "ssdp",
@@ -64,18 +64,18 @@
         ]
       },
       "descriptor": {
-        "url_redacted": "http://\u003cDEVICE_IP\u003e:1374/description.xml",
-        "raw_file": "devices/eversolo-dmp-a6-livingroom/descriptor.xml",
+        "url_redacted": "http://<DEVICE_IP>:1374/description.xml",
+        "raw_file": "devices/eversolo-dmp-a6/descriptor.xml",
         "parsed": {
           "device_type": "urn:schemas-upnp-org:device:MediaRenderer:1",
-          "friendly_name": "DMP-A6(livingroom)",
+          "friendly_name": "DMP-A6",
           "manufacturer": "EVERSOLO",
           "manufacturer_url": "http://www.eversolo.com",
           "model_description": "Plutinosoft AV Media Renderer Device",
           "model_name": "AV Renderer Device",
           "model_url": "http://www.plutinosoft.com/platinum",
           "udn": "uuid:800a805eef11-dmr",
-          "presentation_url": "http://\u003cDEVICE_IP\u003e:1374/",
+          "presentation_url": "http://<DEVICE_IP>:1374/",
           "x_dlna_doc": "DMR-1.50",
           "icons": [
             {
@@ -83,30 +83,30 @@
               "width": 64,
               "height": 64,
               "depth": 16,
-              "url": "http://\u003cDEVICE_IP\u003e:1374/images/icon-64x64.png"
+              "url": "http://<DEVICE_IP>:1374/images/icon-64x64.png"
             }
           ],
           "services": [
             {
               "service_type": "urn:schemas-upnp-org:service:AVTransport:1",
               "service_id": "urn:upnp-org:serviceId:AVTransport",
-              "scpd_url": "http://\u003cDEVICE_IP\u003e:1374/AVTransport/800a805eef11-dmr/scpd.xml",
-              "control_url": "http://\u003cDEVICE_IP\u003e:1374/AVTransport/800a805eef11-dmr/control.xml",
-              "event_sub_url": "http://\u003cDEVICE_IP\u003e:1374/AVTransport/800a805eef11-dmr/event.xml"
+              "scpd_url": "http://<DEVICE_IP>:1374/AVTransport/800a805eef11-dmr/scpd.xml",
+              "control_url": "http://<DEVICE_IP>:1374/AVTransport/800a805eef11-dmr/control.xml",
+              "event_sub_url": "http://<DEVICE_IP>:1374/AVTransport/800a805eef11-dmr/event.xml"
             },
             {
               "service_type": "urn:schemas-upnp-org:service:ConnectionManager:1",
               "service_id": "urn:upnp-org:serviceId:ConnectionManager",
-              "scpd_url": "http://\u003cDEVICE_IP\u003e:1374/ConnectionManager/800a805eef11-dmr/scpd.xml",
-              "control_url": "http://\u003cDEVICE_IP\u003e:1374/ConnectionManager/800a805eef11-dmr/control.xml",
-              "event_sub_url": "http://\u003cDEVICE_IP\u003e:1374/ConnectionManager/800a805eef11-dmr/event.xml"
+              "scpd_url": "http://<DEVICE_IP>:1374/ConnectionManager/800a805eef11-dmr/scpd.xml",
+              "control_url": "http://<DEVICE_IP>:1374/ConnectionManager/800a805eef11-dmr/control.xml",
+              "event_sub_url": "http://<DEVICE_IP>:1374/ConnectionManager/800a805eef11-dmr/event.xml"
             },
             {
               "service_type": "urn:schemas-upnp-org:service:RenderingControl:1",
               "service_id": "urn:upnp-org:serviceId:RenderingControl",
-              "scpd_url": "http://\u003cDEVICE_IP\u003e:1374/RenderingControl/800a805eef11-dmr/scpd.xml",
-              "control_url": "http://\u003cDEVICE_IP\u003e:1374/RenderingControl/800a805eef11-dmr/control.xml",
-              "event_sub_url": "http://\u003cDEVICE_IP\u003e:1374/RenderingControl/800a805eef11-dmr/event.xml"
+              "scpd_url": "http://<DEVICE_IP>:1374/RenderingControl/800a805eef11-dmr/scpd.xml",
+              "control_url": "http://<DEVICE_IP>:1374/RenderingControl/800a805eef11-dmr/control.xml",
+              "event_sub_url": "http://<DEVICE_IP>:1374/RenderingControl/800a805eef11-dmr/event.xml"
             }
           ]
         }
@@ -141,7 +141,7 @@
           "vorbis": 2,
           "wav": 3
         },
-        "raw_file": "devices/eversolo-dmp-a6-livingroom/protocol-info.txt"
+        "raw_file": "devices/eversolo-dmp-a6/protocol-info.txt"
       },
       "drive_test": {
         "performed": true,
@@ -175,7 +175,7 @@
               "TRANSITIONING",
               "PLAYING"
             ],
-            "transcript_file": "devices/eversolo-dmp-a6-livingroom/drive/01-flac-96k-24.log",
+            "transcript_file": "devices/eversolo-dmp-a6/drive/01-flac-96k-24.log",
             "elapsed_seconds": 12.112666417
           },
           {
@@ -207,7 +207,7 @@
               "TRANSITIONING",
               "PLAYING"
             ],
-            "transcript_file": "devices/eversolo-dmp-a6-livingroom/drive/02-flac-44k-16.log",
+            "transcript_file": "devices/eversolo-dmp-a6/drive/02-flac-44k-16.log",
             "elapsed_seconds": 12.083209791
           },
           {
@@ -239,7 +239,7 @@
               "TRANSITIONING",
               "PLAYING"
             ],
-            "transcript_file": "devices/eversolo-dmp-a6-livingroom/drive/03-wav-pcm-192k-24.log",
+            "transcript_file": "devices/eversolo-dmp-a6/drive/03-wav-pcm-192k-24.log",
             "elapsed_seconds": 12.165680084
           },
           {
@@ -271,7 +271,7 @@
               "TRANSITIONING",
               "PLAYING"
             ],
-            "transcript_file": "devices/eversolo-dmp-a6-livingroom/drive/04-wav-pcm-96k-24.log",
+            "transcript_file": "devices/eversolo-dmp-a6/drive/04-wav-pcm-96k-24.log",
             "elapsed_seconds": 12.177933542
           },
           {
@@ -303,7 +303,7 @@
               "TRANSITIONING",
               "PLAYING"
             ],
-            "transcript_file": "devices/eversolo-dmp-a6-livingroom/drive/05-wav-pcm-48k-16.log",
+            "transcript_file": "devices/eversolo-dmp-a6/drive/05-wav-pcm-48k-16.log",
             "elapsed_seconds": 12.206285541
           },
           {
@@ -335,7 +335,7 @@
               "TRANSITIONING",
               "PLAYING"
             ],
-            "transcript_file": "devices/eversolo-dmp-a6-livingroom/drive/06-wav-pcm-44k-16.log",
+            "transcript_file": "devices/eversolo-dmp-a6/drive/06-wav-pcm-44k-16.log",
             "elapsed_seconds": 12.181318208
           },
           {
@@ -367,7 +367,7 @@
               "TRANSITIONING",
               "PLAYING"
             ],
-            "transcript_file": "devices/eversolo-dmp-a6-livingroom/drive/07-mp3-320.log",
+            "transcript_file": "devices/eversolo-dmp-a6/drive/07-mp3-320.log",
             "elapsed_seconds": 12.075881042
           },
           {
@@ -399,7 +399,7 @@
               "TRANSITIONING",
               "PLAYING"
             ],
-            "transcript_file": "devices/eversolo-dmp-a6-livingroom/drive/08-aac-256.log",
+            "transcript_file": "devices/eversolo-dmp-a6/drive/08-aac-256.log",
             "elapsed_seconds": 12.170291292
           }
         ]

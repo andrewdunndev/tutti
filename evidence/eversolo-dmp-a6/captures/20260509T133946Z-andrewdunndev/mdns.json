@@ -5,7 +5,7 @@
     "hostname": "mbp.local",
     "port": 7000,
     "addrs": [
-      "\u003cCLIENT_IP\u003e",
+      "<CLIENT_IP>",
       "fe80::1ce1:1d01:13cc:bd4b",
       "fd30:551b:af42:48cb:c44:86d0:101f:2024"
     ],
@@ -35,7 +35,7 @@
     "hostname": "andunn--20250620-5DT6C.local",
     "port": 7000,
     "addrs": [
-      "\u003cRFC1918_IP\u003e",
+      "<RFC1918_IP>",
       "fe80::4d9:21d9:89d8:4e90",
       "fd30:551b:af42:48cb:c8f:2843:13c5:4d32"
     ],
@@ -65,7 +65,7 @@
     "hostname": "mbp.local",
     "port": 7000,
     "addrs": [
-      "\u003cCLIENT_IP\u003e",
+      "<CLIENT_IP>",
       "fe80::1ce1:1d01:13cc:bd4b",
       "fd30:551b:af42:48cb:c44:86d0:101f:2024"
     ],
@@ -86,11 +86,11 @@
   },
   {
     "service_type": "_raop._tcp",
-    "instance": "800a805eef11\\@DMP-A6\\(livingroom\\)._raop._tcp.local",
+    "instance": "800a805eef11\\@DMP-A6._raop._tcp.local",
     "hostname": "Android.local",
     "port": 5500,
     "addrs": [
-      "\u003cDEVICE_IP\u003e",
+      "<DEVICE_IP>",
       "fe80::e659:1a2c:7bbb:7c3e"
     ],
     "txt": {
@@ -119,7 +119,7 @@
     "hostname": "andunn--20250620-5DT6C.local",
     "port": 7000,
     "addrs": [
-      "\u003cRFC1918_IP\u003e",
+      "<RFC1918_IP>",
       "fe80::4d9:21d9:89d8:4e90",
       "fd30:551b:af42:48cb:c8f:2843:13c5:4d32"
     ],
@@ -144,7 +144,7 @@
     "hostname": "80:0a:80:5e:ef:11-0.local",
     "port": 9590,
     "addrs": [
-      "\u003cDEVICE_IP\u003e"
+      "<DEVICE_IP>"
     ],
     "txt": {
       "CPath": "/zc/0",
