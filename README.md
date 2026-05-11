@@ -69,6 +69,24 @@ test tones from a transient local HTTP server. If a device is already
 `PLAYING`, tutti refuses unless `--force` is passed. Output lands in
 `./capture-<timestamp>-<host>/`.
 
+Errors name the next action, not just the problem (re-run with a
+specific interface, open a firewall port, file the failing
+capture-id). See [tutti.dunn.dev/learn/errors/][errors] for the
+shape and three exemplars.
+
+[errors]: https://tutti.dunn.dev/learn/errors/
+
+## Library compare
+
+```sh
+tutti diff-libs --descriptor http://<DEVICE_IP>:1054/description.xml
+```
+
+Hands the same descriptor to every Go control-point library tutti
+knows about and reports where they diverge. Useful when you have a
+device that one client sees and another doesn't, and you're trying to
+isolate which library's parser dropped it.
+
 ## What you get
 
 Per device on your LAN, the capture records:
@@ -84,7 +102,60 @@ Per device on your LAN, the capture records:
 
 Schema: [`schema/manifest.v1.json`](schema/manifest.v1.json) is the
 source of truth. The Go validator, the renderer's TypeScript types,
-and the CI gate are all derived from it.
+and the CI gate are all derived from it. Full walkthrough of the
+capture shape: [tutti.dunn.dev/learn/manifest/][manifest].
+
+[manifest]: https://tutti.dunn.dev/learn/manifest/
+
+<details>
+<summary>Capture directory layout</summary>
+
+```
+capture-2026-05-09T143022Z-andrewdunndev/
+├── manifest.json                 # schema-versioned index
+├── ssdp.json                     # parsed SSDP responses
+├── ssdp-raw.txt                  # original wire dump
+├── mdns.json                     # parsed mDNS records
+├── devices/
+│   └── eversolo-dmp-a6/          # one dir per device
+│       ├── descriptor.xml        # raw
+│       ├── descriptor.json       # parsed, canonical
+│       ├── decisions.json        # per-library accept/reject + reason
+│       ├── protocol-info.json    # parsed Sink list
+│       ├── protocol-info.txt     # raw GetProtocolInfo response
+│       └── drive/                # only with --drive
+└── notes.md                      # writable by you
+```
+
+</details>
+
+## Schema policy
+
+The schema is versioned independently of the binary. Within a
+schema-major-version (v1.x):
+
+- New fields are added as nullable. Older captures pass validation
+  with the field absent.
+- Existing fields' shapes are frozen. Their meanings are frozen.
+- Derived fields (counts, classifications) can be added if they're
+  computable from raw artifacts in the same capture, so old captures
+  can be re-derived against new tutti versions.
+
+A breaking change bumps the schema major version. The renderer keeps
+parsers for every shipped major version. Old captures keep rendering.
+
+`tutti validate` rejects captures that are technically well-formed
+JSON but don't actually capture anything useful:
+
+- A capture with `runstats.ssdp_responses == 0` *and*
+  `runstats.mdns_records == 0` is rejected. If your LAN really has
+  zero devices announcing on either protocol, pass `--allow-empty` to
+  acknowledge.
+- A `devices[]` entry must have at least one entry in `decisions`.
+- A `drive_test` with `performed: true` must have at least one entry
+  in `runs[]`.
+- A `redactions` array must be present unless `--no-redact` was set
+  (and the manifest records that flag was set).
 
 ## Scope
 
@@ -125,7 +196,8 @@ walkthrough with templates: [tutti.dunn.dev/contribute][contribute].
 disclosure surface for everything not in this README:
 
 - [`/learn/`][learn]: protocol references, why streaming is finicky,
-  and a 35-stack implementations catalog.
+  a 35-stack implementations catalog, the capture shape walkthrough,
+  and the error-message design notes.
 - [`/devices/`][devices]: every profiled device with library
   decisions, format-support summary, drive transcripts, capture
   history.

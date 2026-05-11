@@ -6,15 +6,16 @@ const entries = (await getCollection('learn')).sort(
   (a, b) => a.data.order - b.data.order,
 );
 ---
-<Layout title="Learn" description="Reference documentation for UPnP/DLNA audio streaming: how it works, why it's finicky, what implements it.">
+<Layout title="Learn" description="Reference documentation for UPnP/DLNA audio streaming and tutti's output: how it works, why it's finicky, what implements it, what a capture looks like.">
   <header>
     <p class="page-eyebrow">Reference</p>
     <h1 class="page-title">Learn</h1>
     <p class="page-lede">
-      Three long-form documents that explain audio streaming end to end:
-      how the protocols work, where they go wrong in practice, and what
-      every device and app in this space is built on. Read in order or
-      jump to the one you need.
+      Long-form documents that explain audio streaming end to end: how
+      the protocols work, where they go wrong in practice, what every
+      device and app in this space is built on, and what tutti hands
+      you when a capture finishes. Read in order or jump to the one you
+      need.
     </p>
   </header>
 
