@@ -187,10 +187,6 @@ const deviceMetaSchema = z.object({
   music_sources: z.array(z.string().min(1)).optional(),
   links: z.object({
     manufacturer: z.string().url().optional(),
-    support: z.string().url().optional(),
-    firmware: z.string().url().optional(),
-    manual: z.string().url().optional(),
-    purchase: z.string().url().optional(),
   }).optional(),
 });
 
