@@ -35,13 +35,9 @@
     "links": {
       "type": "object",
       "additionalProperties": false,
-      "description": "Outbound links for someone troubleshooting the device. All optional; the site renders only the keys actually present.",
+      "description": "Outbound link for someone troubleshooting the device. Renders as a single tag-shaped button beneath the title.",
       "properties": {
-        "manufacturer": { "type": "string", "format": "uri", "description": "Primary product page on the manufacturer's site." },
-        "support":      { "type": "string", "format": "uri", "description": "Support / contact page for the product." },
-        "firmware":     { "type": "string", "format": "uri", "description": "Firmware downloads or release notes page." },
-        "manual":       { "type": "string", "format": "uri", "description": "User manual (PDF or web)." },
-        "purchase":     { "type": "string", "format": "uri", "description": "A current purchase page; useful for reproducing a capture against a fresh unit." }
+        "manufacturer": { "type": "string", "format": "uri", "description": "Primary product page on the manufacturer's site." }
       }
     }
   }
