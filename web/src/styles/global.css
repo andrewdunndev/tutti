@@ -8,6 +8,12 @@
 * { box-sizing: border-box; }
 
 html {
+  /* Tutti pins to light. Diagrams and SVGs are authored against a
+     bright surface — dark inverts kill contrast on the sequence
+     diagrams and the device illustration art. data-theme="light"
+     on <html> opts out of the reference tokens' dark media query;
+     color-scheme aligns browser-native chrome with the tokens. */
+  color-scheme: light;
   background: var(--surface);
   color: var(--text);
   font-family: var(--font-body);
