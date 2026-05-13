@@ -159,7 +159,7 @@ main.page {
   border-radius: var(--radius);
   padding: var(--space-4);
 }
-.tile-label {
+.metric-label {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   letter-spacing: 0.1em;
@@ -167,25 +167,77 @@ main.page {
   color: var(--text-muted);
   margin: 0 0 var(--space-2) 0;
 }
-.tile-value {
+.metric-value {
   font-size: var(--text-2xl);
   font-weight: 700;
   color: var(--accent);
   margin: 0 0 var(--space-1) 0;
   letter-spacing: -0.015em;
 }
-.tile-sub {
+.metric-sub {
   font-size: var(--text-sm);
   color: var(--text-2);
   margin: 0;
 }
 
-.tile-grid {
+.metric-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: var(--space-3);
   margin: var(--space-4) 0;
 }
+
+/* canonical tile primitive per reference/repository/SKILL.md
+   "Layout primitives": .tile-grid is 2-up comparable facets;
+   .tile-list is a vertical stack of wide rectangles. Same .tile
+   box, two layout wrappers. */
+.tile-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+  margin: var(--space-4) 0;
+}
+.tile-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+  margin: var(--space-4) 0;
+}
+@media (max-width: 640px) {
+  .tile-grid { grid-template-columns: 1fr; }
+}
+.tile-eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 0 0 var(--space-1) 0;
+}
+.tile-headline {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--accent);
+  margin: 0 0 var(--space-2) 0;
+  letter-spacing: -0.015em;
+  line-height: 1.15;
+}
+.tile-grid .tile-headline { font-size: var(--text-2xl); }
+.tile-prose {
+  font-size: var(--text-sm);
+  color: var(--text-2);
+  margin: 0 0 var(--space-2) 0;
+  line-height: 1.55;
+}
+.tile-meta {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 0;
+}
+.tile pre { margin: var(--space-2) 0; }
 
 /* details/summary progressive disclosure */
 details {

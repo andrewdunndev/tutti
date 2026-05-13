@@ -143,26 +143,26 @@ const deviceCount = corpus.size;
       explicitly.
     </p>
 
-    <div class="failure-grid">
-      <div class="failure-card">
-        <p class="failure-stage">stage 4</p>
-        <h3 class="failure-title">Parser mismatch</h3>
-        <p class="failure-body">
+    <div class="tile-list">
+      <div class="tile">
+        <p class="tile-eyebrow">stage 4</p>
+        <h3 class="tile-headline">Parser mismatch</h3>
+        <p class="tile-prose">
           The library walks the descriptor and rejects the device
           because <code>deviceType</code> isn't the exact string it
           expected, or the control URL didn't parse, or a UUID-shaped
           field doesn't match RFC 4122. Different libraries reject
           different shapes. The user sees: device missing from picker.
         </p>
-        <p class="failure-evidence">
+        <p class="tile-meta">
           tutti shows: per-library decision matrix on each device's page.
         </p>
       </div>
 
-      <div class="failure-card">
-        <p class="failure-stage">stage 5</p>
-        <h3 class="failure-title">Format under-announced</h3>
-        <p class="failure-body">
+      <div class="tile">
+        <p class="tile-eyebrow">stage 5</p>
+        <h3 class="tile-headline">Format under-announced</h3>
+        <p class="tile-prose">
           Device's <code>GetProtocolInfo</code> Sink list omits a
           format the device <em>actually</em> plays (DSD on
           Plutinosoft-derived stacks is the canonical case). Control
@@ -170,23 +170,23 @@ const deviceCount = corpus.size;
           list will never offer it. The user sees: format greyed out,
           even though it works in another app.
         </p>
-        <p class="failure-evidence">
+        <p class="tile-meta">
           tutti shows: announced sinks vs. drive-test outcomes side by
           side.
         </p>
       </div>
 
-      <div class="failure-card">
-        <p class="failure-stage">stage 5</p>
-        <h3 class="failure-title">Metadata surface mismatch</h3>
-        <p class="failure-body">
+      <div class="tile">
+        <p class="tile-eyebrow">stage 5</p>
+        <h3 class="tile-headline">Metadata surface mismatch</h3>
+        <p class="tile-prose">
           Device renders the artist/title from the file's embedded
           tags rather than the DIDL-Lite envelope the control point
           sent — or vice versa. The user sees: wrong song name or
           missing cover art on the device's display, even though
           playback is fine.
         </p>
-        <p class="failure-evidence">
+        <p class="tile-meta">
           tutti shows: round-trip status (matched / mismatched /
           absent) and which surface the device honored.
         </p>
@@ -301,49 +301,8 @@ const deviceCount = corpus.size;
     margin: 0 auto;
   }
 
-  .failure-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: var(--space-4);
-    margin-top: var(--space-5);
-  }
-  .failure-card {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: var(--space-5);
-  }
-  .failure-stage {
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    margin: 0 0 var(--space-2) 0;
-  }
-  .failure-title {
-    font-size: var(--text-lg);
-    font-weight: 700;
-    margin: 0 0 var(--space-3) 0;
-    color: var(--accent);
-  }
-  .failure-body {
-    color: var(--text-2);
-    font-size: var(--text-sm);
-    line-height: 1.6;
-    margin: 0 0 var(--space-3) 0;
-  }
-  .failure-body code {
-    font-size: 0.9em;
-  }
-  .failure-evidence {
-    color: var(--text-muted);
-    font-size: var(--text-xs);
-    margin: 0;
-    padding-top: var(--space-2);
-    border-top: 1px solid var(--border);
-    font-style: italic;
-  }
+  /* .failure-* classes collapsed into the canonical .tile-list/.tile
+     primitive — see reference/repository/SKILL.md "Layout primitives". */
 
   .cta-bottom {
     margin-top: var(--space-8);

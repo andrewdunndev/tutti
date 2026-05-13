@@ -106,30 +106,30 @@ function contributorUrl(c: string): string {
     )}
   </header>
 
-  <section class="tile-grid">
+  <section class="metric-grid">
     <div class="tile">
-      <p class="tile-label">Latest capture</p>
-      <p class="tile-value">{formatDate(m.captured_at)}</p>
-      <p class="tile-sub">
+      <p class="metric-label">Latest capture</p>
+      <p class="metric-value">{formatDate(m.captured_at)}</p>
+      <p class="metric-sub">
         {m.contributor ? <a href={contributorUrl(m.contributor)} target="_blank" rel="noopener">{m.contributor}</a> : 'anonymous'}
         {' · tutti '}{m.tutti_version}
       </p>
     </div>
     <div class="tile">
-      <p class="tile-label">Capture count</p>
-      <p class="tile-value">{device.history.length}</p>
-      <p class="tile-sub">across the corpus</p>
+      <p class="metric-label">Capture count</p>
+      <p class="metric-value">{device.history.length}</p>
+      <p class="metric-sub">across the corpus</p>
     </div>
     <div class="tile">
-      <p class="tile-label">Decisions</p>
-      <p class="tile-value">{decisions.length}</p>
-      <p class="tile-sub">{decisions.filter(([, d]) => d.result === 'accepted').length} accepted · {decisions.filter(([, d]) => d.result === 'rejected').length} rejected</p>
+      <p class="metric-label">Decisions</p>
+      <p class="metric-value">{decisions.length}</p>
+      <p class="metric-sub">{decisions.filter(([, d]) => d.result === 'accepted').length} accepted · {decisions.filter(([, d]) => d.result === 'rejected').length} rejected</p>
     </div>
     {proto && (
       <div class="tile">
-        <p class="tile-label">Audio sinks</p>
-        <p class="tile-value">{proto.audio_sink_count}</p>
-        <p class="tile-sub">of {proto.sink_count} total announced</p>
+        <p class="metric-label">Audio sinks</p>
+        <p class="metric-value">{proto.audio_sink_count}</p>
+        <p class="metric-sub">of {proto.sink_count} total announced</p>
       </div>
     )}
   </section>
