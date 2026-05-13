@@ -1,4 +1,4 @@
-![tutti — a LAN audio renderer probe. Calls out across the network, listens for what each device says, drops a paste-ready evidence bundle.](hero.svg)
+![hero](hero.svg)
 
 # tutti
 

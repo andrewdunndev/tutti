@@ -1,4 +1,5 @@
-@import './tokens.css';
+@import '@dunn.dev/reference/tokens/index.css';
+@import '@dunn.dev/reference/site.css';
 
 * { box-sizing: border-box; }
 
