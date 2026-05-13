@@ -1,5 +1,9 @@
 @import '@dunn.dev/reference/tokens/index.css';
-@import '@dunn.dev/reference/site.css';
+/* Note: NOT importing @dunn.dev/reference/site.css — tutti has its
+   own chrome (.site-header, .hero, .brand-name) that conflicts with
+   reference's canonical chrome class names. Tokens-only consumption
+   per the design-system standard's minimum floor; tutti's own
+   chrome CSS below uses the tokens. */
 
 * { box-sizing: border-box; }
 
