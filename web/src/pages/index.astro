@@ -81,38 +81,34 @@ const deviceCount = corpus.size;
         <text x="950" y="160" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="13" font-weight="600" fill="#0a0a0a">"here I am"</text>
         <text x="950" y="178" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" fill="#707070">describes its services</text>
 
-        <!-- divider 1 -->
-        <line x1="60" y1="230" x2="1040" y2="230" stroke="#e0e0e0" stroke-width="1" stroke-dasharray="2,4"/>
 
         <!-- step 3: GET descriptor -->
-        <line x1="260" y1="270" x2="840" y2="270" stroke="#4a6741" stroke-width="2"/>
-        <polygon points="840,270 826,264 826,276" fill="#4a6741"/>
-        <text x="550" y="263" text-anchor="middle" font-family="IBM Plex Mono, Menlo, monospace" font-size="11" font-weight="600" fill="#4a6741" letter-spacing="0.5">3. GET &lt;LOCATION&gt;</text>
-        <text x="550" y="285" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="#707070" font-style="italic">fetch the device descriptor XML</text>
+        <line x1="260" y1="268" x2="840" y2="268" stroke="#4a6741" stroke-width="2"/>
+        <polygon points="840,268 826,264 826,276" fill="#4a6741"/>
+        <text x="550" y="260" text-anchor="middle" font-family="IBM Plex Mono, Menlo, monospace" font-size="11" font-weight="600" fill="#4a6741" letter-spacing="0.5">3. GET &lt;LOCATION&gt;</text>
+        <text x="550" y="284" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="#707070" font-style="italic">fetch the device descriptor XML</text>
 
         <!-- step 4: descriptor response -->
-        <line x1="840" y1="330" x2="260" y2="330" stroke="#707070" stroke-width="1.5" stroke-dasharray="4,3"/>
-        <polygon points="260,330 274,324 274,336" fill="#707070"/>
-        <text x="550" y="322" text-anchor="middle" font-family="IBM Plex Mono, Menlo, monospace" font-size="11" font-weight="600" fill="#707070" letter-spacing="0.5">4. &lt;root&gt;…&lt;/root&gt;</text>
+        <line x1="840" y1="328" x2="260" y2="328" stroke="#707070" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <polygon points="260,328 274,324 274,336" fill="#707070"/>
+        <text x="550" y="320" text-anchor="middle" font-family="IBM Plex Mono, Menlo, monospace" font-size="11" font-weight="600" fill="#707070" letter-spacing="0.5">4. &lt;root&gt;…&lt;/root&gt;</text>
         <text x="550" y="344" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="#707070" font-style="italic">deviceType, services, control URLs</text>
 
         <text x="150" y="320" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="13" font-weight="600" fill="#0a0a0a">parses the descriptor</text>
-        <text x="150" y="338" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" fill="#707070">finds AVTransport service</text>
+        <text x="150" y="336" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" fill="#707070">finds AVTransport service</text>
         <text x="150" y="356" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" fill="#a8443a" font-weight="600">most failures land here</text>
 
-        <!-- divider 2 -->
-        <line x1="60" y1="390" x2="1040" y2="390" stroke="#e0e0e0" stroke-width="1" stroke-dasharray="2,4"/>
 
         <!-- step 5: SetAVTransportURI -->
-        <line x1="260" y1="430" x2="840" y2="430" stroke="#4a6741" stroke-width="2"/>
-        <polygon points="840,430 826,424 826,436" fill="#4a6741"/>
-        <text x="550" y="422" text-anchor="middle" font-family="IBM Plex Mono, Menlo, monospace" font-size="11" font-weight="600" fill="#4a6741" letter-spacing="0.5">5. SOAP: SetAVTransportURI</text>
+        <line x1="260" y1="428" x2="840" y2="428" stroke="#4a6741" stroke-width="2"/>
+        <polygon points="840,428 826,424 826,436" fill="#4a6741"/>
+        <text x="550" y="420" text-anchor="middle" font-family="IBM Plex Mono, Menlo, monospace" font-size="11" font-weight="600" fill="#4a6741" letter-spacing="0.5">5. SOAP: SetAVTransportURI</text>
         <text x="550" y="444" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="#707070" font-style="italic">+ DIDL-Lite envelope (title, art, format)</text>
 
         <!-- step 6: Play -->
-        <line x1="260" y1="490" x2="840" y2="490" stroke="#4a6741" stroke-width="2"/>
-        <polygon points="840,490 826,484 826,496" fill="#4a6741"/>
-        <text x="550" y="482" text-anchor="middle" font-family="IBM Plex Mono, Menlo, monospace" font-size="11" font-weight="600" fill="#4a6741" letter-spacing="0.5">6. SOAP: Play</text>
+        <line x1="260" y1="488" x2="840" y2="488" stroke="#4a6741" stroke-width="2"/>
+        <polygon points="840,488 826,484 826,496" fill="#4a6741"/>
+        <text x="550" y="480" text-anchor="middle" font-family="IBM Plex Mono, Menlo, monospace" font-size="11" font-weight="600" fill="#4a6741" letter-spacing="0.5">6. SOAP: Play</text>
         <text x="550" y="504" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="#707070" font-style="italic">device transitions: STOPPED → TRANSITIONING → PLAYING</text>
 
         <!-- step 7: device fetches media -->
@@ -122,8 +118,6 @@ const deviceCount = corpus.size;
         <text x="950" y="578" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" fill="#707070">decodes, sends to DAC</text>
         <text x="950" y="618" text-anchor="middle" font-family="IBM Plex Mono, Menlo, monospace" font-size="10" fill="#707070">HTTP GET, separate TCP connection</text>
 
-        <!-- divider 3 -->
-        <line x1="60" y1="640" x2="1040" y2="640" stroke="#e0e0e0" stroke-width="1" stroke-dasharray="2,4"/>
 
         <!-- step 8: poll -->
         <line x1="260" y1="680" x2="840" y2="680" stroke="#4a6741" stroke-width="2"/>
