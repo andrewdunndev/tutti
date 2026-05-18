@@ -111,12 +111,12 @@ const deviceCount = corpus.size;
         <text x="550" y="480" text-anchor="middle" font-family="IBM Plex Mono, Menlo, monospace" font-size="11" font-weight="600" fill="#4a6741" letter-spacing="0.5">6. SOAP: Play</text>
         <text x="550" y="504" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="#707070" font-style="italic">device transitions: STOPPED → TRANSITIONING → PLAYING</text>
 
-        <!-- step 7: device fetches media -->
-        <line x1="950" y1="540" x2="950" y2="600" stroke="#707070" stroke-width="1.5" stroke-dasharray="4,3"/>
-        <polygon points="950,600 944,586 956,586" fill="#707070"/>
+        <!-- step 7: device fetches media. The action happens on the
+             renderer side, not via SOAP. The previous vertical arrow at
+             x=950 cut through the labels; text alone carries it. -->
         <text x="950" y="560" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="13" font-weight="600" fill="#0a0a0a">renderer fetches the URL</text>
         <text x="950" y="578" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" fill="#707070">decodes, sends to DAC</text>
-        <text x="950" y="618" text-anchor="middle" font-family="IBM Plex Mono, Menlo, monospace" font-size="10" fill="#707070">HTTP GET, separate TCP connection</text>
+        <text x="950" y="600" text-anchor="middle" font-family="IBM Plex Mono, Menlo, monospace" font-size="10" fill="#707070">HTTP GET, separate TCP connection</text>
 
 
         <!-- step 8: poll -->
