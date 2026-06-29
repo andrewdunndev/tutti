@@ -6,7 +6,7 @@ require (
 	github.com/grandcat/zeroconf v1.0.0
 	github.com/oklog/ulid/v2 v2.1.1
 	github.com/santhosh-tekuri/jsonschema/v6 v6.0.2
-	golang.org/x/sys v0.44.0
+	golang.org/x/sys v0.46.0
 )
 
 require (
