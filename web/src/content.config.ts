@@ -3,7 +3,8 @@
 // manifest is a typed entry; the device list page groups by slug,
 // the device detail page resolves the latest capture per slug.
 
-import { defineCollection, z } from 'astro:content';
+import { defineCollection } from 'astro:content';
+import { z } from 'zod';
 import { glob } from 'astro/loaders';
 
 const didlMetadata = z.object({
@@ -45,7 +46,7 @@ const protocolInfo = z.object({
   source_count: z.number().optional(),
   sink_count: z.number(),
   audio_sink_count: z.number(),
-  format_matches: z.record(z.union([z.number(), z.null()])),
+  format_matches: z.record(z.string(), z.union([z.number(), z.null()])),
   raw_file: z.string(),
 });
 
@@ -106,7 +107,7 @@ const mdnsService = z.object({
   hostname: z.string().optional(),
   port: z.number().optional(),
   addrs: z.array(z.string()).optional(),
-  txt: z.record(z.string()).optional(),
+  txt: z.record(z.string(), z.string()).optional(),
 });
 
 const device = z.object({
@@ -125,7 +126,7 @@ const device = z.object({
     raw_file: z.string(),
     parsed: descriptorParsed,
   }).optional(),
-  decisions: z.record(decision).optional(),
+  decisions: z.record(z.string(), decision).optional(),
   protocol_info: protocolInfo.optional(),
   drive_test: z.object({
     performed: z.boolean(),
