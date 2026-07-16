@@ -55,6 +55,7 @@ include:
   # default linux+darwin set.
   - component: gitlab.com/dunn.dev/pipeline/go-build@3.1.0
     inputs:
+      job_name: go-build
       binary_name: tutti
       package_path: ./cmd/tutti
       ldflags: '-s -w -X gitlab.com/dunn.dev/tutti/internal/version.Tutti=$CI_COMMIT_REF_NAME'
@@ -129,7 +130,7 @@ audit:
 # both go-build and go-release-binary, including the cosign sign
 # step.
 
-build:
+go-build:
   parallel:
     matrix:
       - GOOS: linux
