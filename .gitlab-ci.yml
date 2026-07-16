@@ -40,11 +40,11 @@ variables:
 
 include:
   # Lint: golangci-lint via the catalog's pinned ci-go. Real gate.
-  - component: gitlab.com/dunn.dev/pipeline/go-lint@3.0.0
+  - component: gitlab.com/dunn.dev/pipeline/go-lint@3.1.0
 
   # Audit: govulncheck on every push. allow_failure by default
   # (vuln-DB shifts shouldn't block a release).
-  - component: gitlab.com/dunn.dev/pipeline/go-audit@3.0.0
+  - component: gitlab.com/dunn.dev/pipeline/go-audit@3.1.0
 
   # Branch verification: parallel:matrix cross-compile on every
   # push. ldflags overridden so the binary's version package gets
@@ -53,7 +53,7 @@ include:
   # internal/version so the manifest writer can read it). Matrix
   # is overridden below to add windows/amd64 to the catalog's
   # default linux+darwin set.
-  - component: gitlab.com/dunn.dev/pipeline/go-build@3.0.0
+  - component: gitlab.com/dunn.dev/pipeline/go-build@3.1.0
     inputs:
       binary_name: tutti
       package_path: ./cmd/tutti
@@ -63,7 +63,7 @@ include:
   # signature + per-binary .sha256 + upload to package registry.
   # Same ldflags override target as go-build, with $CI_COMMIT_TAG
   # so the released binary stamps the tag itself.
-  - component: gitlab.com/dunn.dev/pipeline/go-release-binary@3.0.0
+  - component: gitlab.com/dunn.dev/pipeline/go-release-binary@3.1.0
     inputs:
       binary_name: tutti
       package_path: ./cmd/tutti
@@ -71,17 +71,17 @@ include:
       ldflags: '-s -w -X gitlab.com/dunn.dev/tutti/internal/version.Tutti=$CI_COMMIT_TAG'
 
   # Tag-only: CycloneDX SBOM per binary via syft.
-  - component: gitlab.com/dunn.dev/pipeline/go-sbom@3.0.0
+  - component: gitlab.com/dunn.dev/pipeline/go-sbom@3.1.0
     inputs:
       package_name: tutti
 
   # Tag-only: SLSA v1.0 provenance per binary, cosign-signed via
   # GitLab OIDC keyless.
-  - component: gitlab.com/dunn.dev/pipeline/slsa-attest@3.0.0
+  - component: gitlab.com/dunn.dev/pipeline/slsa-attest@3.1.0
 
   # Tag-only: GitLab Release with binaries + SBOMs + attestations
   # linked. Idempotent across pipeline reruns.
-  - component: gitlab.com/dunn.dev/pipeline/release-create@3.0.0
+  - component: gitlab.com/dunn.dev/pipeline/release-create@3.1.0
     inputs:
       package_name: tutti
 
@@ -93,7 +93,7 @@ include:
   # holding the Cloudflare Web Analytics beacon token; when present,
   # the build step injects the beacon into every .html file under
   # dist/ before deploy.
-  - component: gitlab.com/dunn.dev/pipeline/cloudflare-worker@3.0.0
+  - component: gitlab.com/dunn.dev/pipeline/cloudflare-worker@3.1.0
     inputs:
       wrangler_config: web/wrangler.toml
       build_command: npm run build
