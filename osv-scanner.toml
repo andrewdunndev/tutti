@@ -1,0 +1,25 @@
+# osv-scanner ignore list for tutti.
+#
+# GO-2026-5932 -- golang.org/x/crypto/openpgp is unmaintained/unsafe-by-design.
+# "Fixed in: N/A" upstream (see https://pkg.go.dev/vuln/GO-2026-5932): there is
+# no version of golang.org/x/crypto that resolves this, so bumping cannot clear
+# it. tutti does not use openpgp:
+#
+#   $ go mod why golang.org/x/crypto/openpgp
+#   # golang.org/x/crypto/openpgp
+#   (main module does not need package golang.org/x/crypto/openpgp)
+#
+# x/crypto is only pulled in transitively for ed25519, via
+# github.com/miekg/dns <- github.com/grandcat/zeroconf (mDNS discovery).
+# govulncheck's symbol-level analysis confirms zero reachable vulnerabilities:
+# this is a module-level finding (the scanner flags the whole x/crypto module
+# because SOME subpackage has an advisory), not a call-reachable one.
+#
+# ignoreUntil forces this to re-surface and re-block the gate after the date
+# below, so it cannot silently become permanent invisible debt -- either
+# re-confirm still-unreachable/still-unfixed and roll the date, or find a real
+# fix (e.g. a maintained fork) at that point.
+[[IgnoredVulns]]
+id = "GO-2026-5932"
+ignoreUntil = 2026-10-26
+reason = "golang.org/x/crypto/openpgp unmaintained, Fixed in: N/A upstream. tutti does not import openpgp (go mod why: main module does not need it); x/crypto is pulled in transitively for ed25519 only, via miekg/dns/grandcat-zeroconf. govulncheck symbol-level scan: 0 reachable vulnerabilities. Module-level-only finding. Review by expiry: reconfirm unreachable/unfixed or replace the dep chain."
