@@ -34,11 +34,30 @@ stages:
   - deploy
   - package
   - release
+  - verdict
+  - automerge-gate
 
 variables:
   GOFLAGS: -mod=readonly
 
 include:
+  # Fail-closed automerge gate (renovate-single-maintainer campaign,
+  # GO-2026-5023 remediation follow-up). platformAutomerge is true
+  # estate-wide and the canonical preset automerges minor/patch +
+  # security-fix MRs; on GitLab the automerge decision rides the
+  # aggregate pipeline status, so the whole pipeline (lint + test +
+  # build, plus the OSV verdict below) must pass before Renovate
+  # native auto-merge proceeds. osv-verdict emits CHECK_OSV via
+  # dotenv (newly-introduced findings only on MRs); automerge-gate
+  # consumes it over needs: and blocks unless every required check
+  # is present and pass. Mirrors dunn.dev/bairn's wiring for the
+  # same gate.
+  - component: gitlab.com/dunn.dev/pipeline/osv-verdict@3.1.0
+  - component: gitlab.com/dunn.dev/pipeline/automerge-gate@3.1.0
+    inputs:
+      stage: automerge-gate
+      required-checks: "osv"
+
   # Lint: golangci-lint via the catalog's pinned ci-go. Real gate.
   - component: gitlab.com/dunn.dev/pipeline/go-lint@3.1.0
 
