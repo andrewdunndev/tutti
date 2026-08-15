@@ -52,18 +52,18 @@ include:
   # consumes it over needs: and blocks unless every required check
   # is present and pass. Mirrors dunn.dev/bairn's wiring for the
   # same gate.
-  - component: gitlab.com/dunn.dev/pipeline/osv-verdict@4.4.1
-  - component: gitlab.com/dunn.dev/pipeline/automerge-gate@4.4.1
+  - component: gitlab.com/dunn.dev/pipeline/osv-verdict@4.5.0
+  - component: gitlab.com/dunn.dev/pipeline/automerge-gate@4.5.0
     inputs:
       stage: automerge-gate
       required-checks: "osv"
 
   # Lint: golangci-lint via the catalog's pinned ci-go. Real gate.
-  - component: gitlab.com/dunn.dev/pipeline/go-lint@4.4.1
+  - component: gitlab.com/dunn.dev/pipeline/go-lint@4.5.0
 
   # Audit: govulncheck on every push. allow_failure by default
   # (vuln-DB shifts shouldn't block a release).
-  - component: gitlab.com/dunn.dev/pipeline/go-audit@4.4.1
+  - component: gitlab.com/dunn.dev/pipeline/go-audit@4.5.0
 
   # Branch verification: parallel:matrix cross-compile on every
   # push. ldflags overridden so the binary's version package gets
@@ -72,7 +72,7 @@ include:
   # internal/version so the manifest writer can read it). Matrix
   # is overridden below to add windows/amd64 to the catalog's
   # default linux+darwin set.
-  - component: gitlab.com/dunn.dev/pipeline/go-build@4.4.1
+  - component: gitlab.com/dunn.dev/pipeline/go-build@4.5.0
     inputs:
       job_name: go-build
       binary_name: tutti
@@ -83,7 +83,7 @@ include:
   # signature + per-binary .sha256 + upload to package registry.
   # Same ldflags override target as go-build, with $CI_COMMIT_TAG
   # so the released binary stamps the tag itself.
-  - component: gitlab.com/dunn.dev/pipeline/go-release-binary@4.4.1
+  - component: gitlab.com/dunn.dev/pipeline/go-release-binary@4.5.0
     inputs:
       binary_name: tutti
       package_path: ./cmd/tutti
@@ -91,17 +91,17 @@ include:
       ldflags: '-s -w -X gitlab.com/dunn.dev/tutti/internal/version.Tutti=$CI_COMMIT_TAG'
 
   # Tag-only: CycloneDX SBOM per binary via syft.
-  - component: gitlab.com/dunn.dev/pipeline/go-sbom@4.4.1
+  - component: gitlab.com/dunn.dev/pipeline/go-sbom@4.5.0
     inputs:
       package_name: tutti
 
   # Tag-only: SLSA v1.0 provenance per binary, cosign-signed via
   # GitLab OIDC keyless.
-  - component: gitlab.com/dunn.dev/pipeline/slsa-attest@4.4.1
+  - component: gitlab.com/dunn.dev/pipeline/slsa-attest@4.5.0
 
   # Tag-only: GitLab Release with binaries + SBOMs + attestations
   # linked. Idempotent across pipeline reruns.
-  - component: gitlab.com/dunn.dev/pipeline/release-create@4.4.1
+  - component: gitlab.com/dunn.dev/pipeline/release-create@4.5.0
     inputs:
       package_name: tutti
 
@@ -113,7 +113,7 @@ include:
   # holding the Cloudflare Web Analytics beacon token; when present,
   # the build step injects the beacon into every .html file under
   # dist/ before deploy.
-  - component: gitlab.com/dunn.dev/pipeline/cloudflare-worker@4.4.1
+  - component: gitlab.com/dunn.dev/pipeline/cloudflare-worker@4.5.0
     inputs:
       wrangler_config: web/wrangler.toml
       build_command: npm run build
@@ -179,7 +179,7 @@ package:
 # edits one and forgets to mirror.
 schema-sync:
   stage: lint
-  image: registry.gitlab.com/dunn.dev/pipeline/ci-go:4.4.1@sha256:ed66deaf021795d3f93b037a7b7c1cac7418a687e88ca368a8b527b7eb121ebc
+  image: registry.gitlab.com/dunn.dev/pipeline/ci-go:4.5.0@sha256:a75a78290392a7dd0d96cdcecd618a5465b7743c767f191ff74caf2f44cbde71
   script:
     - |
       if ! cmp -s schema/manifest.v1.json internal/schema/manifest.v1.json; then
@@ -198,7 +198,7 @@ schema-sync:
 # until a go-test catalog component lands.
 test:
   stage: test
-  image: registry.gitlab.com/dunn.dev/pipeline/ci-go:4.4.1@sha256:ed66deaf021795d3f93b037a7b7c1cac7418a687e88ca368a8b527b7eb121ebc
+  image: registry.gitlab.com/dunn.dev/pipeline/ci-go:4.5.0@sha256:a75a78290392a7dd0d96cdcecd618a5465b7743c767f191ff74caf2f44cbde71
   variables:
     CGO_ENABLED: "1"
     GOMODCACHE: $CI_PROJECT_DIR/.gomodcache
