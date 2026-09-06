@@ -12,43 +12,45 @@ The wire-level theory behind these artifacts (SSDP, mDNS, descriptor parse, AVTr
 
 <div class="cat-explainer">
 <svg viewBox="0 0 720 240" role="img" aria-label="The capture pipeline. tutti listens on the LAN for SSDP and mDNS announcements, fetches each device's descriptor and protocol info, optionally drives a real cast, and writes everything as JSON plus raw wire artifacts under a single capture directory. The site at tutti.dunn.dev reads that directory back to render device pages.">
-  <rect x="20" y="20" width="680" height="200" fill="#ffffff" stroke="#e0e0e0" stroke-width="1" rx="3"/>
-  <text x="40" y="46" font-family="IBM Plex Mono, monospace" font-size="10" font-weight="700" fill="#707070" letter-spacing="1.4">CAPTURE PIPELINE</text>
+  <rect x="20" y="20" width="680" height="200" fill="var(--bg)" stroke="var(--border)" stroke-width="1" rx="3"/>
+  <text x="40" y="46" font-family="IBM Plex Mono, monospace" font-size="10" font-weight="700" fill="var(--text-muted)" letter-spacing="1.4">CAPTURE PIPELINE</text>
 
-  <rect x="40" y="74" width="160" height="120" rx="3" fill="#f4f4f4" stroke="#e0e0e0" stroke-width="1"/>
-  <text x="120" y="94" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="700" fill="#707070" letter-spacing="1.2">LAN</text>
-  <text x="120" y="116" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" font-weight="600" fill="#0a0a0a">audio devices</text>
-  <text x="120" y="138" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9" fill="#707070">SSDP / mDNS</text>
-  <text x="120" y="152" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9" fill="#707070">descriptor.xml</text>
-  <text x="120" y="166" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9" fill="#707070">GetProtocolInfo</text>
-  <text x="120" y="180" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9" fill="#707070">AVTransport</text>
+  <rect x="40" y="74" width="160" height="120" rx="3" fill="var(--surface)" stroke="var(--border)" stroke-width="1"/>
+  <text x="120" y="94" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="700" fill="var(--text-muted)" letter-spacing="1.2">LAN</text>
+  <text x="120" y="116" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" font-weight="600" fill="var(--text)">audio devices</text>
+  <text x="120" y="138" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9" fill="var(--text-muted)">SSDP / mDNS</text>
+  <text x="120" y="152" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9" fill="var(--text-muted)">descriptor.xml</text>
+  <text x="120" y="166" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9" fill="var(--text-muted)">GetProtocolInfo</text>
+  <text x="120" y="180" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9" fill="var(--text-muted)">AVTransport</text>
 
-  <line x1="200" y1="134" x2="280" y2="134" stroke="#4a6741" stroke-width="2"/>
-  <polygon points="280,134 270,129 270,139" fill="#4a6741"/>
-  <text x="240" y="127" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" fill="#404040">listen + probe</text>
+  <line x1="200" y1="134" x2="280" y2="134" stroke="var(--text-muted)" stroke-width="2"/>
+  <polygon points="280,134 270,129 270,139" fill="var(--text-muted)"/>
+  <rect x="202" y="112" width="76" height="14" fill="var(--bg)"/>
+  <text x="240" y="123" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="8" fill="var(--text-2)">listen + probe</text>
 
-  <rect x="280" y="74" width="160" height="120" rx="3" fill="#ffffff" stroke="#4a6741" stroke-width="2"/>
-  <text x="360" y="94" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="700" fill="#4a6741" letter-spacing="1.2">TUTTI</text>
-  <text x="360" y="116" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" font-weight="700" fill="#4a6741">capture binary</text>
-  <text x="360" y="138" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9" fill="#404040">discover</text>
-  <text x="360" y="152" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9" fill="#404040">analyse (library decisions)</text>
-  <text x="360" y="166" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9" fill="#404040">drive (--drive only)</text>
-  <text x="360" y="180" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9" fill="#404040">redact + write</text>
+  <rect x="280" y="74" width="160" height="120" rx="3" fill="var(--bg)" stroke="var(--accent)" stroke-width="2"/>
+  <text x="360" y="94" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="700" fill="var(--accent)" letter-spacing="1.2">TUTTI</text>
+  <text x="360" y="116" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" font-weight="700" fill="var(--accent)">capture binary</text>
+  <text x="360" y="138" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9" fill="var(--text-2)">discover</text>
+  <text x="360" y="152" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9" fill="var(--text-2)">analyse (library decisions)</text>
+  <text x="360" y="166" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9" fill="var(--text-2)">drive (--drive only)</text>
+  <text x="360" y="180" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9" fill="var(--text-2)">redact + write</text>
 
-  <line x1="440" y1="134" x2="520" y2="134" stroke="#4a6741" stroke-width="2"/>
-  <polygon points="520,134 510,129 510,139" fill="#4a6741"/>
-  <text x="480" y="127" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" fill="#404040">write to disk</text>
+  <line x1="440" y1="134" x2="520" y2="134" stroke="var(--accent)" stroke-width="2"/>
+  <polygon points="520,134 510,129 510,139" fill="var(--accent)"/>
+  <rect x="445" y="112" width="70" height="14" fill="var(--bg)"/>
+  <text x="480" y="123" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="8" fill="var(--text-2)">write to disk</text>
 
-  <rect x="520" y="74" width="160" height="120" rx="3" fill="#f4f4f4" stroke="#e0e0e0" stroke-width="1"/>
-  <text x="600" y="94" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="700" fill="#707070" letter-spacing="1.2">CAPTURE DIR</text>
-  <text x="600" y="116" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" font-weight="600" fill="#0a0a0a">manifest.json</text>
-  <text x="600" y="138" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9" fill="#707070">ssdp.json + raw.txt</text>
-  <text x="600" y="152" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9" fill="#707070">mdns.json</text>
-  <text x="600" y="166" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9" fill="#707070">devices/&lt;slug&gt;/...</text>
-  <text x="600" y="180" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9" fill="#707070">notes.md (yours)</text>
+  <rect x="520" y="74" width="160" height="120" rx="3" fill="var(--surface)" stroke="var(--border)" stroke-width="1"/>
+  <text x="600" y="94" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="700" fill="var(--text-muted)" letter-spacing="1.2">CAPTURE DIR</text>
+  <text x="600" y="116" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" font-weight="600" fill="var(--text)">manifest.json</text>
+  <text x="600" y="138" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9" fill="var(--text-muted)">ssdp.json + raw.txt</text>
+  <text x="600" y="152" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9" fill="var(--text-muted)">mdns.json</text>
+  <text x="600" y="166" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9" fill="var(--text-muted)">devices/&lt;slug&gt;/...</text>
+  <text x="600" y="180" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9" fill="var(--text-muted)">notes.md (yours)</text>
 
-  <line x1="600" y1="194" x2="600" y2="210" stroke="#707070" stroke-width="1.5" stroke-dasharray="3,2"/>
-  <text x="600" y="216" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="8" fill="#707070">consumed by tutti.dunn.dev</text>
+  <line x1="600" y1="194" x2="600" y2="210" stroke="var(--text-muted)" stroke-width="1.5" stroke-dasharray="3,2"/>
+  <text x="600" y="216" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="8" fill="var(--text-muted)">consumed by tutti.dunn.dev</text>
 </svg>
 
 Three phases, one directory. <em>Discover</em> is passive listening plus M-SEARCH bursts. <em>Analyse</em> is library-decision reimplementation against each fetched descriptor. <em>Drive</em> is opt-in: tutti only sends real AVTransport actions when you pass <code>--drive</code>. Everything is written to disk before the binary exits — you can review the bundle, edit <code>notes.md</code>, and decide whether to submit.

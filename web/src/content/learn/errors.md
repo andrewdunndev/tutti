@@ -10,29 +10,29 @@ tutti errors are written to name the next action, not just the problem. A user h
 
 <div class="cat-explainer">
 <svg viewBox="0 0 720 240" role="img" aria-label="Anatomy of a tutti error message. Three parts: an Error line that names exactly what failed, a Suggested next step line that proposes the action the user can take to recover, and an optional debug-toggle line pointing at a tutti flag that exposes more state.">
-  <rect x="20" y="20" width="680" height="200" fill="#ffffff" stroke="#e0e0e0" stroke-width="1" rx="3"/>
-  <text x="40" y="46" font-family="IBM Plex Mono, monospace" font-size="10" font-weight="700" fill="#707070" letter-spacing="1.4">ERROR ANATOMY</text>
+  <rect x="20" y="20" width="680" height="200" fill="var(--bg)" stroke="var(--border)" stroke-width="1" rx="3"/>
+  <text x="40" y="46" font-family="IBM Plex Mono, monospace" font-size="10" font-weight="700" fill="var(--text-muted)" letter-spacing="1.4">ERROR ANATOMY</text>
 
-  <rect x="40" y="64" width="420" height="140" rx="3" fill="#f4f4f4" stroke="#e0e0e0" stroke-width="1"/>
-  <text x="56" y="86" font-family="IBM Plex Mono, monospace" font-size="11" font-weight="700" fill="#0a0a0a">Error: no SSDP responses received</text>
-  <text x="56" y="102" font-family="IBM Plex Mono, monospace" font-size="11" fill="#0a0a0a">on any interface (en0, en1).</text>
-  <text x="56" y="132" font-family="IBM Plex Mono, monospace" font-size="11" fill="#404040">Suggested next step: re-run with</text>
-  <text x="56" y="148" font-family="IBM Plex Mono, monospace" font-size="11" fill="#404040">`--interface &lt;name&gt;` or check firewall.</text>
-  <text x="56" y="184" font-family="IBM Plex Mono, monospace" font-size="11" fill="#707070">Run `tutti capture --debug-network`.</text>
+  <rect x="40" y="64" width="420" height="140" rx="3" fill="var(--surface)" stroke="var(--border)" stroke-width="1"/>
+  <text x="56" y="86" font-family="IBM Plex Mono, monospace" font-size="11" font-weight="700" fill="var(--text)">Error: no SSDP responses received</text>
+  <text x="56" y="102" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--text)">on any interface (en0, en1).</text>
+  <text x="56" y="132" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--text-2)">Suggested next step: re-run with</text>
+  <text x="56" y="148" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--text-2)">`--interface &lt;name&gt;` or check firewall.</text>
+  <text x="56" y="184" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--text-muted)">Run `tutti capture --debug-network`.</text>
 
-  <line x1="466" y1="92" x2="500" y2="92" stroke="#4a6741" stroke-width="1.5"/>
-  <text x="510" y="86" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="700" fill="#4a6741" letter-spacing="1.2">WHAT FAILED</text>
-  <text x="510" y="100" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="#404040">precise, with context</text>
-  <text x="510" y="114" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="#404040">(interfaces that were tried)</text>
+  <line x1="466" y1="92" x2="500" y2="92" stroke="var(--accent)" stroke-width="1.5"/>
+  <text x="510" y="86" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="700" fill="var(--accent)" letter-spacing="1.2">WHAT FAILED</text>
+  <text x="510" y="100" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="var(--text-2)">precise, with context</text>
+  <text x="510" y="114" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="var(--text-2)">(interfaces that were tried)</text>
 
-  <line x1="466" y1="140" x2="500" y2="140" stroke="#4a6741" stroke-width="1.5"/>
-  <text x="510" y="134" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="700" fill="#4a6741" letter-spacing="1.2">NEXT ACTION</text>
-  <text x="510" y="148" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="#404040">concrete, runnable</text>
-  <text x="510" y="162" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="#404040">commands the user can paste</text>
+  <line x1="466" y1="140" x2="500" y2="140" stroke="var(--accent)" stroke-width="1.5"/>
+  <text x="510" y="134" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="700" fill="var(--accent)" letter-spacing="1.2">NEXT ACTION</text>
+  <text x="510" y="148" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="var(--text-2)">concrete, runnable</text>
+  <text x="510" y="162" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="var(--text-2)">commands the user can paste</text>
 
-  <line x1="466" y1="190" x2="500" y2="190" stroke="#707070" stroke-width="1.5" stroke-dasharray="3,2"/>
-  <text x="510" y="184" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="700" fill="#707070" letter-spacing="1.2">DEBUG ESCAPE</text>
-  <text x="510" y="198" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="#404040">flag for "show me more"</text>
+  <line x1="466" y1="190" x2="500" y2="190" stroke="var(--text-muted)" stroke-width="1.5" stroke-dasharray="3,2"/>
+  <text x="510" y="184" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="700" fill="var(--text-muted)" letter-spacing="1.2">DEBUG ESCAPE</text>
+  <text x="510" y="198" font-family="IBM Plex Sans, sans-serif" font-size="10" fill="var(--text-2)">flag for "show me more"</text>
 </svg>
 
 Every tutti error has the first two parts. The debug-escape line is added when there's a useful flag to expose more state. <em>What failed</em> is the diagnostic. <em>Next action</em> is the recovery. The user shouldn't have to read documentation, file an issue, or guess what to try first.
