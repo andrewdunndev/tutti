@@ -65,13 +65,13 @@ include:
   # (vuln-DB shifts shouldn't block a release).
   - component: gitlab.com/dunn.dev/pipeline/go-audit@4.6.0
 
-  # Reference-check: advisory conformance check against dunn.dev/reference
-  # (fail_on_violation: false during adoption, matching the other estate
-  # repos). Runs in the lint stage, ahead of build.
+  # Reference-check: enforcing conformance check against dunn.dev/reference
+  # (fail_on_violation: true — the repo verified clean in advisory, so the
+  # gate is real). Runs in the lint stage, ahead of build.
   - component: gitlab.com/dunn.dev/pipeline/reference-check@4.6.0
     inputs:
       reference_ref: main
-      fail_on_violation: false
+      fail_on_violation: true
 
   # Branch verification: parallel:matrix cross-compile on every
   # push. ldflags overridden so the binary's version package gets
