@@ -6,8 +6,6 @@
 # 2.1.1 carries the .exe handling for windows targets we depend on.
 
 default:
-  tags:
-    - storr
   interruptible: true
 
 # workflow.rules: prevent duplicate pipelines. When a branch has an
