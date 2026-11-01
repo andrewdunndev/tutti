@@ -110,6 +110,9 @@ include:
   - component: gitlab.com/dunn.dev/pipeline/release-create@4
     inputs:
       package_name: tutti
+  - component: gitlab.com/dunn.dev/pipeline/github-release@4
+    inputs:
+      github_repo: andrewdunndev/tutti
 
   # Site: build + deploy the Astro corpus site at web/ to Cloudflare
   # Workers (with Static Assets). Wrangler config lives in web/; the
