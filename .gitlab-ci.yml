@@ -188,7 +188,7 @@ package:
 # edits one and forgets to mirror.
 schema-sync:
   stage: lint
-  image: registry.gitlab.com/dunn.dev/pipeline/ci-go:4.13.0@sha256:ceead376f6dd4a8674588915128053eae738b789e7e0636969fc92e70e50ede0
+  image: registry.gitlab.com/dunn.dev/pipeline/ci-go:4.14.0@sha256:4e6e62e0f414208ead8c7009950e88b7b73b528be3993f5c70e586d559b4f833
   script:
     - |
       if ! cmp -s schema/manifest.v1.json internal/schema/manifest.v1.json; then
@@ -207,7 +207,7 @@ schema-sync:
 # until a go-test catalog component lands.
 test:
   stage: test
-  image: registry.gitlab.com/dunn.dev/pipeline/ci-go:4.13.0@sha256:ceead376f6dd4a8674588915128053eae738b789e7e0636969fc92e70e50ede0
+  image: registry.gitlab.com/dunn.dev/pipeline/ci-go:4.14.0@sha256:4e6e62e0f414208ead8c7009950e88b7b73b528be3993f5c70e586d559b4f833
   variables:
     CGO_ENABLED: "1"
     GOMODCACHE: $CI_PROJECT_DIR/.gomodcache
